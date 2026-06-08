@@ -1,0 +1,65 @@
+/* 컬러 팔레트 디자인 시스템.md CSS 변수 */
+:root {
+  --color-primary:        #1A6EFF;
+  --color-primary-light:  #5599FF;
+  --color-primary-dark:   #0A3D99;
+  --color-secondary:      #E878B0;
+  --color-accent:         #FF4D9E;
+  --color-bg-primary:     #000000;
+  --color-bg-secondary:   #0D0D0D;
+  --color-bg-overlay:     rgba(10, 10, 16, 0.85);
+  --color-text-primary:   #FFFFFF;
+  --color-text-secondary: #CCCCCC;
+  --color-text-muted:     #888888;
+  --color-border:         rgba(255, 255, 255, 0.15);
+  --color-border-focus:   #1A6EFF;
+  --color-border-accent:  rgba(232, 120, 176, 0.40);
+
+  font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  :root { --color-text-muted: #AAAAAA; }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --color-primary:      ButtonText;
+    --color-bg-primary:   Canvas;
+    --color-text-primary: CanvasText;
+    --color-border:       ButtonBorder;
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--color-primary-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover { color: var(--color-secondary); }
+
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
