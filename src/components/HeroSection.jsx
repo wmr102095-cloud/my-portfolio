@@ -63,7 +63,8 @@ export default function HeroSection() {
         minHeight: '100vh',
         width: '100%',
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
         position: 'relative',
         overflow: 'hidden',
         background: `
@@ -130,7 +131,6 @@ export default function HeroSection() {
               color:      colors.textSecondary,
               fontStyle:  'italic',
               lineHeight: 1.6,
-              wordBreak:  'keep-all',
             }}
           >
             {displayed}
