@@ -7,6 +7,7 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import { colors } from '../theme/theme';
 import HeroSection from '../components/HeroSection';
+import AboutSection from '../components/AboutSection';
 import ContactSection from '../components/ContactSection';
 
 const sectionBase = {
@@ -14,61 +15,6 @@ const sectionBase = {
   py: { xs: 8, md: 12 },
   px: { xs: 2, md: 4 },
 };
-
-/* ── About Me 섹션 ── */
-function AboutSection() {
-  return (
-    <Box
-      component="section"
-      id="about"
-      sx={{
-        ...sectionBase,
-        backgroundColor: colors.bgSecondary,
-        borderBottom: `1px solid ${colors.border}`,
-      }}
-    >
-      <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-        <Typography
-          variant="overline"
-          sx={{ color: colors.secondary, letterSpacing: 4, mb: 2, display: 'block' }}
-        >
-          About Me Section
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-          About{' '}
-          <Box component="span" sx={{ color: colors.secondary }}>
-            Me
-          </Box>
-        </Typography>
-        <Card sx={{ mb: 4, textAlign: 'left' }}>
-          <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-            <Typography variant="body1" sx={{ color: colors.textSecondary, mb: 2 }}>
-              여기는 <strong style={{ color: colors.textPrimary }}>About Me 섹션</strong>입니다.
-            </Typography>
-            <Typography variant="body2" sx={{ color: colors.textMuted }}>
-              간단한 자기소개와 '더 알아보기' 버튼이 들어갈 예정입니다.
-            </Typography>
-          </CardContent>
-        </Card>
-        <Button
-          variant="outlined"
-          size="large"
-          sx={{
-            borderColor: colors.secondary,
-            color: colors.secondary,
-            '&:hover': {
-              borderColor: colors.accent,
-              color: colors.accent,
-              backgroundColor: `${colors.accent}11`,
-            },
-          }}
-        >
-          더 알아보기
-        </Button>
-      </Container>
-    </Box>
-  );
-}
 
 /* ── Skill Tree 섹션 ── */
 function SkillSection() {
