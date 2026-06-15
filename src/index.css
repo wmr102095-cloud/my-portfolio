@@ -1,22 +1,22 @@
-/* 컬러 팔레트 디자인 시스템.md CSS 변수 */
+/* 웜 베이지/브라운 디자인 시스템 */
 :root {
-  --color-primary:        #1A6EFF;
-  --color-primary-light:  #5599FF;
-  --color-primary-dark:   #0A3D99;
-  --color-secondary:      #E878B0;
-  --color-accent:         #FF4D9E;
-  --color-bg-primary:     #000000;
-  --color-bg-secondary:   #0D0D0D;
-  --color-bg-overlay:     rgba(10, 10, 16, 0.85);
-  --color-text-primary:   #FFFFFF;
-  --color-text-secondary: #CCCCCC;
-  --color-text-muted:     #888888;
-  --color-border:         rgba(255, 255, 255, 0.15);
-  --color-border-focus:   #1A6EFF;
-  --color-border-accent:  rgba(232, 120, 176, 0.40);
+  --color-primary:        #9f8473;
+  --color-primary-light:  #b09484;
+  --color-primary-dark:   #6c5d53;
+  --color-secondary:      #6c5d53;
+  --color-accent:         #c7b199;
+  --color-bg-primary:     #dfd3c3;
+  --color-bg-secondary:   #f0e8de;
+  --color-bg-overlay:     rgba(223, 211, 195, 0.92);
+  --color-text-primary:   #1a1412;
+  --color-text-secondary: #3d2e28;
+  --color-text-muted:     #7a6860;
+  --color-border:         rgba(108, 93, 83, 0.20);
+  --color-border-focus:   #9f8473;
+  --color-border-accent:  rgba(159, 132, 115, 0.35);
 
-  font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Inter', system-ui, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,7 +25,7 @@
 }
 
 @media (max-width: 768px) {
-  :root { --color-text-muted: #AAAAAA; }
+  :root { --color-text-muted: #6c5d53; }
 }
 
 @media (forced-colors: active) {
@@ -53,11 +53,11 @@ body {
 }
 
 a {
-  color: var(--color-primary-light);
+  color: var(--color-primary-dark);
   text-decoration: none;
   transition: color 0.2s ease;
 }
-a:hover { color: var(--color-secondary); }
+a:hover { color: var(--color-primary); }
 
 :focus-visible {
   outline: 2px solid var(--color-border-focus);

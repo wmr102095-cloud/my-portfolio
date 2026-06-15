@@ -1,26 +1,25 @@
 import { createTheme } from '@mui/material/styles';
 
-// 컬러 팔레트 디자인 시스템.md 에서 추출한 CSS 변수 기반 MUI 테마
 export const colors = {
-  primary:        '#1A6EFF',
-  primaryLight:   '#5599FF',
-  primaryDark:    '#0A3D99',
-  secondary:      '#E878B0',
-  accent:         '#FF4D9E',
-  bgPrimary:      '#000000',
-  bgSecondary:    '#0D0D0D',
-  bgOverlay:      'rgba(10, 10, 16, 0.85)',
-  textPrimary:    '#FFFFFF',
-  textSecondary:  '#CCCCCC',
-  textMuted:      '#888888',
-  border:         'rgba(255, 255, 255, 0.15)',
-  borderFocus:    '#1A6EFF',
-  borderAccent:   'rgba(232, 120, 176, 0.40)',
+  primary:        '#9f8473',
+  primaryLight:   '#b09484',
+  primaryDark:    '#6c5d53',
+  secondary:      '#6c5d53',
+  accent:         '#c7b199',
+  bgPrimary:      '#dfd3c3',
+  bgSecondary:    '#f0e8de',
+  bgOverlay:      'rgba(223, 211, 195, 0.92)',
+  textPrimary:    '#1a1412',
+  textSecondary:  '#3d2e28',
+  textMuted:      '#7a6860',
+  border:         'rgba(108, 93, 83, 0.20)',
+  borderFocus:    '#9f8473',
+  borderAccent:   'rgba(159, 132, 115, 0.35)',
 };
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
       main:  colors.primary,
       light: colors.primaryLight,
@@ -40,24 +39,46 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { color: colors.textPrimary, fontWeight: 700 },
-    h2: { color: colors.textPrimary, fontWeight: 700 },
-    h3: { color: colors.textPrimary, fontWeight: 600 },
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontFamily: '"Playfair Display", Georgia, serif',
+      color: colors.textPrimary,
+      fontWeight: 700,
+    },
+    h2: {
+      fontFamily: '"Playfair Display", Georgia, serif',
+      color: colors.textPrimary,
+      fontWeight: 700,
+    },
+    h3: {
+      fontFamily: '"Playfair Display", Georgia, serif',
+      color: colors.textPrimary,
+      fontWeight: 600,
+    },
     h4: { color: colors.textSecondary, fontWeight: 600 },
     h5: { color: colors.textSecondary, fontWeight: 500 },
     h6: { color: colors.textSecondary, fontWeight: 500 },
     body1: { color: colors.textPrimary },
     body2: { color: colors.textSecondary },
     caption: { color: colors.textMuted },
+    overline: { color: colors.textMuted, letterSpacing: 3 },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         containedPrimary: {
-          backgroundColor: colors.primary,
-          '&:hover': { backgroundColor: colors.primaryLight },
+          backgroundColor: colors.primaryDark,
+          color: '#f5ede3',
+          '&:hover': { backgroundColor: colors.primary },
           '&:active': { backgroundColor: colors.primaryDark },
+        },
+        outlinedPrimary: {
+          borderColor: colors.border,
+          color: colors.textSecondary,
+          '&:hover': {
+            borderColor: colors.primary,
+            backgroundColor: `${colors.primary}15`,
+          },
         },
       },
     },
@@ -67,6 +88,7 @@ const theme = createTheme({
           backgroundColor: colors.bgSecondary,
           border: `1px solid ${colors.border}`,
           borderRadius: 12,
+          boxShadow: '0 2px 12px rgba(108, 93, 83, 0.08)',
         },
       },
     },
@@ -76,7 +98,22 @@ const theme = createTheme({
           backgroundColor: colors.bgOverlay,
           backdropFilter: 'blur(12px)',
           borderBottom: `1px solid ${colors.border}`,
+          boxShadow: 'none',
+          color: colors.textPrimary,
         },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': { color: colors.textPrimary },
+          '& .MuiInputLabel-root': { color: colors.textMuted },
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: { borderColor: colors.border },
       },
     },
   },
