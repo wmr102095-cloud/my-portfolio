@@ -1,57 +1,10 @@
-import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { colors } from '../theme/theme';
 
-const PHRASES = [
-  '보기 좋아야 쓰고 싶어지고,',
-  '쓰고 싶어야 기억에 남습니다.',
-  '그런 사이트를 만듭니다.',
-];
-
-const TYPE_SPEED   = 65;
-const DELETE_SPEED = 35;
-const PAUSE_TYPED  = 1800;
-const PAUSE_EMPTY  = 320;
-
 export default function HeroSection() {
-  const [displayed,    setDisplayed]    = useState('');
-  const [phraseIdx,    setPhraseIdx]    = useState(0);
-  const [isDeleting,   setIsDeleting]   = useState(false);
-
-  useEffect(() => {
-    const target = PHRASES[phraseIdx];
-    let id;
-
-    if (!isDeleting) {
-      if (displayed.length < target.length) {
-        id = setTimeout(
-          () => setDisplayed(target.slice(0, displayed.length + 1)),
-          TYPE_SPEED,
-        );
-      } else {
-        id = setTimeout(() => setIsDeleting(true), PAUSE_TYPED);
-      }
-    } else {
-      if (displayed.length > 0) {
-        id = setTimeout(
-          () => setDisplayed(displayed.slice(0, -1)),
-          DELETE_SPEED,
-        );
-      } else {
-        setIsDeleting(false);
-        id = setTimeout(
-          () => setPhraseIdx((i) => (i + 1) % PHRASES.length),
-          PAUSE_EMPTY,
-        );
-      }
-    }
-
-    return () => clearTimeout(id);
-  }, [displayed, isDeleting, phraseIdx]);
-
   const scrollTo = (id) =>
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -124,35 +77,19 @@ export default function HeroSection() {
           {/* 구분선 */}
           <Box sx={{ width: 48, height: '2px', backgroundColor: colors.primary, mb: 3, borderRadius: 1 }} />
 
-          {/* 타이핑 줄 — Typography(block) 안에 커서를 넣어 줄바꿈 보장 */}
+          {/* 슬로건 — 3문장 정적 표시 */}
           <Typography
             sx={{
-              fontSize:     { xs: '1.1rem', sm: '1.35rem', md: '1.6rem' },
-              fontWeight:   600,
-              color:        colors.textSecondary,
-              fontStyle:    'italic',
-              lineHeight:   1.6,
-              overflowWrap: 'break-word',
-              wordBreak:    'break-word',
+              fontSize:   { xs: '1.05rem', sm: '1.25rem', md: '1.45rem' },
+              fontWeight: 500,
+              color:      colors.textSecondary,
+              fontStyle:  'italic',
+              lineHeight: 1.9,
             }}
           >
-            {displayed}
-            <Box
-              component="span"
-              sx={{
-                display:         'inline-block',
-                width:           '2px',
-                height:          '0.85em',
-                backgroundColor: colors.primary,
-                ml:              '3px',
-                verticalAlign:   'middle',
-                animation:       'cursorBlink 1s step-end infinite',
-                '@keyframes cursorBlink': {
-                  '0%, 100%': { opacity: 1 },
-                  '50%':      { opacity: 0 },
-                },
-              }}
-            />
+            보기 좋아야 쓰고 싶어지고,<br />
+            쓰고 싶어야 기억에 남습니다.<br />
+            그런 사이트를 만듭니다.
           </Typography>
         </Box>
 
