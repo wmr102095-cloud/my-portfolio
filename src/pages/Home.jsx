@@ -8,6 +8,7 @@ import Divider from '@mui/material/Divider';
 import { colors } from '../theme/theme';
 import HeroSection from '../components/HeroSection';
 import AboutSection from '../components/AboutSection';
+import SkillSection from '../components/SkillSection';
 import ContactSection from '../components/ContactSection';
 
 const sectionBase = {
@@ -15,66 +16,6 @@ const sectionBase = {
   py: { xs: 8, md: 12 },
   px: { xs: 2, md: 4 },
 };
-
-/* ── Skill Tree 섹션 ── */
-function SkillSection() {
-  const skills = ['React', 'TypeScript', 'Node.js', 'Python', 'Figma'];
-  return (
-    <Box
-      component="section"
-      id="skills"
-      sx={{
-        ...sectionBase,
-        backgroundColor: colors.bgPrimary,
-        borderBottom: `1px solid ${colors.border}`,
-      }}
-    >
-      <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-        <Typography
-          variant="overline"
-          sx={{ color: colors.secondary, letterSpacing: 4, mb: 2, display: 'block' }}
-        >
-          Skill Tree Section
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-          Skill{' '}
-          <Box component="span" sx={{ color: colors.primary }}>
-            Tree
-          </Box>
-        </Typography>
-        <Card sx={{ mb: 3, textAlign: 'left' }}>
-          <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-            <Typography variant="body1" sx={{ color: colors.textSecondary, mb: 3 }}>
-              여기는 <strong style={{ color: colors.textPrimary }}>Skill Tree 섹션</strong>입니다.
-            </Typography>
-            <Typography variant="body2" sx={{ color: colors.textMuted, mb: 3 }}>
-              기술 스택을 트리나 프로그레스바로 시각화할 예정입니다.
-            </Typography>
-            <Divider sx={{ borderColor: colors.border, mb: 3 }} />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {skills.map((skill) => (
-                <Box
-                  key={skill}
-                  sx={{
-                    px: 2,
-                    py: 0.5,
-                    borderRadius: 20,
-                    border: `1px solid ${colors.borderAccent}`,
-                    color: colors.secondary,
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                  }}
-                >
-                  {skill}
-                </Box>
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-      </Container>
-    </Box>
-  );
-}
 
 /* ── Projects 섹션 ── */
 function ProjectsSection() {
