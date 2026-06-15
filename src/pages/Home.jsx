@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import { colors } from '../theme/theme';
+import ContactSection from '../components/ContactSection';
 
 const sectionBase = {
   width: '100%',
@@ -243,45 +244,6 @@ function ProjectsSection() {
         >
           더 보기
         </Button>
-      </Container>
-    </Box>
-  );
-}
-
-/* ── Contact 섹션 ── */
-function ContactSection() {
-  return (
-    <Box
-      component="section"
-      id="contact"
-      sx={{
-        ...sectionBase,
-        backgroundColor: colors.bgPrimary,
-        background: `radial-gradient(ellipse at 50% 100%, ${colors.primaryDark}22 0%, ${colors.bgPrimary} 65%)`,
-      }}
-    >
-      <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-        <Typography
-          variant="overline"
-          sx={{ color: colors.secondary, letterSpacing: 4, mb: 2, display: 'block' }}
-        >
-          Contact Section
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-          <Box component="span" sx={{ color: colors.secondary }}>
-            Contact
-          </Box>
-        </Typography>
-        <Card sx={{ textAlign: 'left' }}>
-          <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-            <Typography variant="body1" sx={{ color: colors.textSecondary, mb: 2 }}>
-              여기는 <strong style={{ color: colors.textPrimary }}>Contact 섹션</strong>입니다.
-            </Typography>
-            <Typography variant="body2" sx={{ color: colors.textMuted }}>
-              연락처, SNS, 간단한 메시지 폼이 들어갈 예정입니다.
-            </Typography>
-          </CardContent>
-        </Card>
       </Container>
     </Box>
   );
