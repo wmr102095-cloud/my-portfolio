@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import { colors } from '../theme/theme';
+import HeroSection from '../components/HeroSection';
 import ContactSection from '../components/ContactSection';
 
 const sectionBase = {
@@ -13,51 +14,6 @@ const sectionBase = {
   py: { xs: 8, md: 12 },
   px: { xs: 2, md: 4 },
 };
-
-/* ── Hero 섹션 ── */
-function HeroSection() {
-  return (
-    <Box
-      component="section"
-      id="hero"
-      sx={{
-        ...sectionBase,
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        background: `radial-gradient(ellipse at 50% 60%, ${colors.primaryDark}33 0%, ${colors.bgPrimary} 70%)`,
-        borderBottom: `1px solid ${colors.border}`,
-      }}
-    >
-      <Container maxWidth="md">
-        <Typography
-          variant="overline"
-          sx={{ color: colors.secondary, letterSpacing: 4, mb: 2, display: 'block' }}
-        >
-          Hero Section
-        </Typography>
-        <Typography variant="h2" sx={{ fontWeight: 700, mb: 3, lineHeight: 1.2 }}>
-          여기는{' '}
-          <Box component="span" sx={{ color: colors.primary }}>
-            Hero 섹션
-          </Box>
-          입니다
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ color: colors.textSecondary, maxWidth: 560, mx: 'auto', mb: 1 }}
-        >
-          메인 비주얼, 이름, 간단 소개가 들어갈 예정입니다.
-        </Typography>
-        <Typography variant="caption" sx={{ color: colors.textMuted }}>
-          [ 이 영역은 개발 예정입니다 ]
-        </Typography>
-      </Container>
-    </Box>
-  );
-}
 
 /* ── About Me 섹션 ── */
 function AboutSection() {
