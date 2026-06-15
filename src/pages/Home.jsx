@@ -1,106 +1,17 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import { colors } from '../theme/theme';
-import HeroSection from '../components/HeroSection';
-import AboutSection from '../components/AboutSection';
-import SkillSection from '../components/SkillSection';
-import ContactSection from '../components/ContactSection';
+import HeroSection     from '../components/HeroSection';
+import AboutSection    from '../components/AboutSection';
+import SkillSection    from '../components/SkillSection';
+import ProjectsSection from '../components/ProjectsSection';
+import ContactSection  from '../components/ContactSection';
 
-const sectionBase = {
-  width: '100%',
-  py: { xs: 8, md: 12 },
-  px: { xs: 2, md: 4 },
-};
-
-/* ── Projects 섹션 ── */
-function ProjectsSection() {
-  const placeholders = ['프로젝트 1', '프로젝트 2', '프로젝트 3'];
-  return (
-    <Box
-      component="section"
-      id="projects"
-      sx={{
-        ...sectionBase,
-        backgroundColor: colors.bgSecondary,
-        borderBottom: `1px solid ${colors.border}`,
-      }}
-    >
-      <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
-        <Typography
-          variant="overline"
-          sx={{ color: colors.secondary, letterSpacing: 4, mb: 2, display: 'block' }}
-        >
-          Projects Section
-        </Typography>
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 3 }}>
-          <Box component="span" sx={{ color: colors.primary }}>
-            Projects
-          </Box>
-        </Typography>
-        <Typography variant="body2" sx={{ color: colors.textMuted, mb: 4 }}>
-          여기는 <strong style={{ color: colors.textSecondary }}>Projects 섹션</strong>입니다.
-          대표작 썸네일 3-4개와 '더 보기' 버튼이 들어갈 예정입니다.
-        </Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-            gap: 3,
-            mb: 4,
-          }}
-        >
-          {placeholders.map((title) => (
-            <Card
-              key={title}
-              sx={{
-                height: 180,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: `1px dashed ${colors.borderFocus}`,
-                backgroundColor: `${colors.primary}0A`,
-                transition: 'border-color 0.2s, transform 0.2s',
-                '&:hover': {
-                  borderColor: colors.primaryLight,
-                  transform: 'translateY(-4px)',
-                },
-              }}
-            >
-              <Typography variant="body2" sx={{ color: colors.textMuted }}>
-                {title} 썸네일 예정
-              </Typography>
-            </Card>
-          ))}
-        </Box>
-        <Button
-          variant="contained"
-          size="large"
-          sx={{
-            backgroundColor: colors.primary,
-            '&:hover': { backgroundColor: colors.primaryLight },
-          }}
-        >
-          더 보기
-        </Button>
-      </Container>
-    </Box>
-  );
-}
-
-/* ── Home 페이지 (5개 섹션 조합) ── */
 export default function Home() {
   return (
-    <Box>
+    <>
       <HeroSection />
       <AboutSection />
       <SkillSection />
       <ProjectsSection />
       <ContactSection />
-    </Box>
+    </>
   );
 }
