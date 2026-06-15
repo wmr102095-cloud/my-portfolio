@@ -67,7 +67,7 @@ const aboutMeData = {
     education:  '울산과학대학교 건축과 중퇴',
     major:      '실내인테리어',
     experience: '신입',
-    photo:      '',
+    photo:      `${import.meta.env.BASE_URL}profile.jpg`,
   },
   sections: [
     {
