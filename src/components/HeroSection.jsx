@@ -6,9 +6,9 @@ import Button from '@mui/material/Button';
 import { colors } from '../theme/theme';
 
 const PHRASES = [
-  '디자인으로 생각하고,',
-  '코드로 만드는,',
-  '프로덕트 디자이너입니다.',
+  '보기 좋아야 쓰고 싶어지고,',
+  '쓰고 싶어야 기억에 남습니다.',
+  '그런 사이트를 만듭니다.',
 ];
 
 const TYPE_SPEED   = 65;
@@ -92,34 +92,51 @@ export default function HeroSection() {
 
         {/* 헤드라인 */}
         <Box sx={{ mb: { xs: 5, md: 7 } }}>
+          {/* 인사 (흐린 색) */}
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2.6rem', sm: '3.4rem', md: '4.5rem' },
+              fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
               fontWeight: 700,
-              lineHeight: 1.12,
-              mb: 1.5,
+              lineHeight: 1.15,
               color: colors.textMuted,
             }}
           >
             안녕하세요,
           </Typography>
 
+          {/* 이름 (진한 색, 고정) */}
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: '2.8rem', sm: '3.8rem', md: '5rem' },
+              fontWeight: 700,
+              lineHeight: 1.05,
+              color: colors.textPrimary,
+              mb: 3,
+            }}
+          >
+            김재우입니다.
+          </Typography>
+
+          {/* 구분선 */}
+          <Box sx={{ width: 48, height: '2px', backgroundColor: colors.primary, mb: 3, borderRadius: 1 }} />
+
           {/* 타이핑 줄 */}
           <Box
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
-              minHeight: { xs: '3.2rem', sm: '4.2rem', md: '5.5rem' },
+              minHeight: { xs: '2rem', sm: '2.4rem', md: '2.8rem' },
             }}
           >
             <Typography
-              variant="h1"
               sx={{
-                fontSize: { xs: '2.6rem', sm: '3.4rem', md: '4.5rem' },
-                fontWeight: 700,
-                lineHeight: 1.12,
-                color: colors.textPrimary,
+                fontSize: { xs: '1.15rem', sm: '1.4rem', md: '1.65rem' },
+                fontWeight: 500,
+                lineHeight: 1.3,
+                color: colors.primary,
+                fontStyle: 'italic',
               }}
             >
               {displayed}
@@ -128,10 +145,10 @@ export default function HeroSection() {
             {/* 커서 */}
             <Box
               sx={{
-                width: { xs: '3px', md: '4px' },
-                height:  { xs: '2.6rem', sm: '3.4rem', md: '4.5rem' },
+                width: { xs: '2px', md: '2px' },
+                height: { xs: '1.3rem', sm: '1.6rem', md: '1.9rem' },
                 backgroundColor: colors.primary,
-                ml: '6px',
+                ml: '5px',
                 flexShrink: 0,
                 animation: 'cursorBlink 1s step-end infinite',
                 '@keyframes cursorBlink': {
@@ -148,14 +165,14 @@ export default function HeroSection() {
           variant="body1"
           sx={{
             color: colors.textMuted,
-            fontSize: { xs: '1rem', md: '1.1rem' },
+            fontSize: { xs: '0.95rem', md: '1.05rem' },
             lineHeight: 1.9,
-            maxWidth: 440,
+            maxWidth: 400,
             mb: { xs: 5, md: 7 },
           }}
         >
-          디자인 감각과 기술적 깊이로<br />
-          사용자에게 가치 있는 경험을 만듭니다.
+          건축과 인테리어에서 시작해 웹으로 온,<br />
+          디자인하고 직접 만드는 사람입니다.
         </Typography>
 
         {/* CTA 버튼 */}
