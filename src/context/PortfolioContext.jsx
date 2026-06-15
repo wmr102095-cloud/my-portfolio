@@ -1,6 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback, useRef } from 'react';
 
-/* ── 초기 데이터 (단일 진실 공급원) ── */
 const INITIAL_DATA = {
   basicInfo: {
     name:       '김재우',
@@ -38,41 +37,68 @@ const INITIAL_DATA = {
   ],
 };
 
-/* ── Context ── */
 const PortfolioContext = createContext(null);
 
 export function PortfolioProvider({ children }) {
-  const [aboutMeData, setAboutMeData] = useState(INITIAL_DATA);
+  const [data, setData] = useState(INITIAL_DATA);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const flashTimer = useRef(null);
 
-  /* 홈 섹션용 파생 데이터 */
-  const getHomeData = () => {
-    const homeContent = aboutMeData.sections
-      .filter((s) => s.showInHome)
-      .map((s) => ({
+  const flash = useCallback(() => {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    setIsSyncing(true);
+    flashTimer.current = setTimeout(() => setIsSyncing(false), 1500);
+  }, []);
+
+  /* 홈 파생 데이터 — aboutMeData가 바뀔 때만 재계산 */
+  const homeData = useMemo(() => ({
+    content: data.sections
+      .filter(s => s.showInHome)
+      .map(s => ({
         id:      s.id,
         title:   s.title,
-        summary: s.content.length > 120
-          ? s.content.substring(0, 120) + '…'
-          : s.content,
-      }));
+        summary: s.content.length > 120 ? s.content.substring(0, 120) + '…' : s.content,
+      })),
+    skills:    [...data.skills].sort((a, b) => b.level - a.level).slice(0, 4),
+    basicInfo: data.basicInfo,
+  }), [data]);
 
-    const topSkills = [...aboutMeData.skills]
-      .sort((a, b) => b.level - a.level)
-      .slice(0, 4);
+  const addSkill = useCallback((skill) => {
+    setData(p => ({ ...p, skills: [...p.skills, skill] }));
+    flash();
+  }, [flash]);
 
-    return { content: homeContent, skills: topSkills, basicInfo: aboutMeData.basicInfo };
-  };
+  const updatePhoto = useCallback((photo) => {
+    setData(p => ({ ...p, basicInfo: { ...p.basicInfo, photo } }));
+    flash();
+  }, [flash]);
 
-  /* 스킬 추가 */
-  const addSkill = (skill) =>
-    setAboutMeData((p) => ({ ...p, skills: [...p.skills, skill] }));
+  const updateSection = useCallback((id, content) => {
+    setData(p => ({
+      ...p,
+      sections: p.sections.map(s => s.id === id ? { ...s, content } : s),
+    }));
+    flash();
+  }, [flash]);
 
-  /* 프로필 사진 업데이트 (AboutMe → 홈 즉시 반영) */
-  const updatePhoto = (photo) =>
-    setAboutMeData((p) => ({ ...p, basicInfo: { ...p.basicInfo, photo } }));
+  const updateSkillLevel = useCallback((skillId, level) => {
+    setData(p => ({
+      ...p,
+      skills: p.skills.map(s => s.id === skillId ? { ...s, level } : s),
+    }));
+    flash();
+  }, [flash]);
 
   return (
-    <PortfolioContext.Provider value={{ aboutMeData, setAboutMeData, getHomeData, addSkill, updatePhoto }}>
+    <PortfolioContext.Provider value={{
+      aboutMeData: data,
+      homeData,
+      isSyncing,
+      addSkill,
+      updatePhoto,
+      updateSection,
+      updateSkillLevel,
+    }}>
       {children}
     </PortfolioContext.Provider>
   );
