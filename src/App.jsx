@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import Box from '@mui/material/Box';
 import theme from './theme/theme';
+import { PortfolioProvider } from './context/PortfolioContext';
 import NavBar from './components/NavBar';
 import Home from './pages/Home';
 import AboutMe from './pages/AboutMe';
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <PortfolioProvider>
       <HashRouter>
         <NavBar />
         <Box component="main" sx={{ pt: '64px' }}>
@@ -21,6 +23,7 @@ export default function App() {
           </Routes>
         </Box>
       </HashRouter>
+      </PortfolioProvider>
     </ThemeProvider>
   );
 }

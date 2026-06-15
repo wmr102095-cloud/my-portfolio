@@ -4,269 +4,199 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
 import { colors } from '../theme/theme';
+import { usePortfolio } from '../context/PortfolioContext';
 
-/* ── 스크롤 진입 감지 훅 ── */
-function useFadeIn(threshold = 0.15) {
+function useFadeIn(threshold = 0.12) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
       { threshold },
     );
-    observer.observe(el);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, [threshold]);
-
   return [ref, visible];
 }
 
-/* ── 스토리 카드 데이터 ── */
-const STORIES = [
-  {
-    num: '01',
-    title: 'Why Design',
-    body:
-      'IT 시대에 누군가의 아이디어를 세계에 알리는 가장 강력한 도구가 웹이라는 걸 알았고, 그 도구를 아름답고 직관적으로 만드는 일 — 그게 디자인이었습니다.',
-  },
-  {
-    num: '02',
-    title: 'My Value',
-    body:
-      '실용적이면서도 아름다운 것을 만듭니다. 보기 좋은 제품이 쓰기도 좋다고 믿습니다. 디자인의 이유를 논리로 설명할 수 있는 디자이너가 되고 싶습니다.',
-  },
-  {
-    num: '03',
-    title: 'Where I\'m Going',
-    body:
-      '디자인 시스템을 직접 설계하고 코드로 구현하는 풀스택 프로덕트 디자이너. 디자인과 개발 사이의 언어 장벽을 없애는 사람이 되고 싶습니다.',
-  },
-];
+const CATEGORY_COLOR = {
+  Frontend:  '#9f8473',
+  Framework: '#5c7a9f',
+  Design:    '#9f6478',
+  Backend:   '#5f8c6e',
+  Tools:     '#72706a',
+};
 
-/* ── 강점 리스트 ── */
-const STRENGTHS = [
-  '디자이너와 개발자 양쪽 언어를 모두 구사 — 협업 속도가 빠릅니다',
-  '아이디어를 머릿속에서 바로 작동하는 프로토타입으로 구현합니다',
-  '"왜 이렇게 생겨야 하는가"를 논리적으로 설명할 수 있는 디자이너입니다',
-];
-
-/* ── 개별 카드 (stagger 딜레이 포함) ── */
-function StoryCard({ num, title, body, delay }) {
-  const [ref, visible] = useFadeIn(0.1);
-
+/* ── 기본 정보 행 ── */
+function MiniInfoRow({ label, value }) {
   return (
-    <Box
-      ref={ref}
-      sx={{
-        opacity:   visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
-        borderTop: `2px solid ${colors.primary}`,
-        pt: 3,
-      }}
-    >
-      <Typography
-        sx={{
-          fontFamily: '"Playfair Display", Georgia, serif',
-          fontSize: '3rem',
-          fontWeight: 700,
-          lineHeight: 1,
-          color: `${colors.textMuted}30`,
-          mb: 1.5,
-          userSelect: 'none',
-        }}
-      >
-        {num}
+    <Box sx={{ display: 'flex', gap: 1.5, py: 0.9,
+               borderBottom: `1px solid ${colors.border}`, '&:last-child': { borderBottom: 'none' } }}>
+      <Typography variant="caption" sx={{ color: colors.textMuted, width: 48, flexShrink: 0, fontSize: '0.7rem' }}>
+        {label}
       </Typography>
-      <Typography
-        variant="h5"
-        sx={{
-          fontFamily: '"Playfair Display", Georgia, serif',
-          fontWeight: 600,
-          color: colors.textPrimary,
-          mb: 2,
-        }}
-      >
-        {title}
-      </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          color: colors.textSecondary,
-          lineHeight: 1.85,
-          fontSize: '0.92rem',
-        }}
-      >
-        {body}
+      <Typography variant="caption" sx={{ color: colors.textPrimary, fontWeight: 500, fontSize: '0.78rem', lineHeight: 1.4 }}>
+        {value}
       </Typography>
     </Box>
   );
 }
 
-/* ── About Me 섹션 ── */
+/* ── About Me 섹션 (홈) ── */
 export default function AboutSection() {
-  const navigate = useNavigate();
-  const [headerRef, headerVisible] = useFadeIn(0.1);
-  const [strengthRef, strengthVisible] = useFadeIn(0.1);
-  const [ctaRef, ctaVisible] = useFadeIn(0.1);
+  const navigate   = useNavigate();
+  const { getHomeData } = usePortfolio();
+
+  const [headerRef, headerVisible]   = useFadeIn(0.1);
+  const [profileRef, profileVisible] = useFadeIn(0.1);
+  const [storyRef, storyVisible]     = useFadeIn(0.1);
+  const [skillRef, skillVisible]     = useFadeIn(0.1);
+  const [ctaRef, ctaVisible]         = useFadeIn(0.1);
+
+  const { content, skills, basicInfo } = getHomeData();
 
   return (
-    <Box
-      component="section"
-      id="about"
-      sx={{
-        width: '100%',
-        py: { xs: 10, md: 14 },
-        px: { xs: 2, md: 4 },
-        backgroundColor: colors.bgSecondary,
-      }}
-    >
+    <Box component="section" id="about"
+      sx={{ width: '100%', py: { xs: 10, md: 14 }, px: { xs: 2, md: 4 },
+            backgroundColor: colors.bgSecondary }}>
       <Container maxWidth="lg">
 
         {/* 섹션 헤더 */}
-        <Box
-          ref={headerRef}
-          sx={{
-            mb: { xs: 7, md: 10 },
-            opacity:   headerVisible ? 1 : 0,
-            transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{ color: colors.primary, letterSpacing: 5, fontSize: '0.68rem', fontWeight: 600, display: 'block', mb: 2 }}
-          >
+        <Box ref={headerRef}
+          sx={{ mb: { xs: 7, md: 9 }, opacity: headerVisible ? 1 : 0,
+                transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          <Typography variant="overline"
+            sx={{ color: colors.primary, letterSpacing: 5, fontSize: '0.68rem', fontWeight: 600, display: 'block', mb: 2 }}>
             About Me
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 3 }}>
-            <Typography
-              variant="h2"
-              sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: { xs: '2.4rem', md: '3.2rem' } }}
-            >
+            <Typography variant="h2"
+              sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: { xs: '2.4rem', md: '3.2rem' } }}>
               이 포트폴리오를<br />만든 사람
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: colors.textMuted,
-                maxWidth: 320,
-                lineHeight: 1.9,
-                fontSize: '0.92rem',
-                pb: 0.5,
-              }}
-            >
-              디자인과 개발, 두 언어를 모두 구사하는<br />
-              프로덕트 디자이너 지망생입니다.
+            <Typography variant="body2"
+              sx={{ color: colors.textMuted, maxWidth: 300, lineHeight: 1.9, fontSize: '0.92rem', pb: 0.5 }}>
+              건축과 인테리어에서 시작해<br />디자인하고 직접 만드는 사람입니다.
             </Typography>
           </Box>
         </Box>
 
-        {/* 스토리 카드 3개 */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' },
-            gap: { xs: 5, md: 6 },
-            mb: { xs: 8, md: 12 },
-          }}
-        >
-          {STORIES.map((s, i) => (
-            <StoryCard key={s.num} {...s} delay={i * 160} />
-          ))}
-        </Box>
+        {/* 프로필 + 스토리 그리드 */}
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '200px 1fr' },
+                   gap: { xs: 5, md: 6 }, mb: { xs: 6, md: 8 } }}>
 
-        {/* 구분선 */}
-        <Box sx={{ borderTop: `1px solid ${colors.border}`, mb: { xs: 6, md: 8 } }} />
+          {/* 프로필 카드 */}
+          <Box ref={profileRef}
+            sx={{ opacity: profileVisible ? 1 : 0, transform: profileVisible ? 'translateY(0)' : 'translateY(24px)',
+                  transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+            {/* 사진 */}
+            <Box sx={{ width: '100%', maxWidth: { xs: 140, md: '100%' }, mx: { xs: 'auto', md: 0 },
+                        aspectRatio: '1/1', borderRadius: 2.5, overflow: 'hidden', mb: 2,
+                        border: `1px solid ${colors.border}`, backgroundColor: `${colors.primary}10` }}>
+              {basicInfo.photo
+                ? <Box component="img" src={basicInfo.photo} alt={basicInfo.name}
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center',
+                              justifyContent: 'center', color: colors.textMuted, fontSize: '2rem' }}>👤</Box>
+              }
+            </Box>
+            {/* 이름 */}
+            <Typography sx={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 700,
+                               fontSize: '1.15rem', color: colors.textPrimary, mb: 1.5,
+                               textAlign: { xs: 'center', md: 'left' } }}>
+              {basicInfo.name}
+            </Typography>
+            {/* 기본 정보 */}
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <MiniInfoRow label="학력" value={basicInfo.education} />
+              <MiniInfoRow label="전공" value={basicInfo.major} />
+              <MiniInfoRow label="경력" value={basicInfo.experience} />
+            </Box>
+          </Box>
 
-        {/* 강점 리스트 */}
-        <Box
-          ref={strengthRef}
-          sx={{
-            mb: { xs: 7, md: 9 },
-            opacity:   strengthVisible ? 1 : 0,
-            transform: strengthVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{ color: colors.textMuted, letterSpacing: 4, fontSize: '0.68rem', display: 'block', mb: 4 }}
-          >
-            What I Bring
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {STRENGTHS.map((text, i) => (
-              <Box
-                key={i}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 2.5,
-                  opacity:   strengthVisible ? 1 : 0,
-                  transform: strengthVisible ? 'translateX(0)' : 'translateX(-16px)',
-                  transition: `opacity 0.5s ease ${i * 120}ms, transform 0.5s ease ${i * 120}ms`,
-                }}
-              >
-                {/* 액센트 마커 */}
-                <Box
-                  sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    backgroundColor: colors.primary,
-                    flexShrink: 0,
-                    mt: '2px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#f5ede3' }} />
+          {/* 스토리 콘텐츠 */}
+          <Box ref={storyRef}
+            sx={{ opacity: storyVisible ? 1 : 0, transform: storyVisible ? 'translateY(0)' : 'translateY(24px)',
+                  transition: 'opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s',
+                  display: 'flex', flexDirection: 'column', gap: 3.5 }}>
+            {content.map((item, i) => (
+              <Box key={item.id}
+                sx={{ opacity: storyVisible ? 1 : 0, transform: storyVisible ? 'translateY(0)' : 'translateY(16px)',
+                      transition: `opacity 0.5s ease ${i * 120 + 100}ms, transform 0.5s ease ${i * 120 + 100}ms` }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                  <Box sx={{ width: 20, height: 20, borderRadius: '50%', backgroundColor: colors.primary,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#f5ede3' }} />
+                  </Box>
+                  <Typography sx={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 600,
+                                     fontSize: '1rem', color: colors.textPrimary }}>
+                    {item.title}
+                  </Typography>
                 </Box>
-                <Typography
-                  variant="body1"
-                  sx={{ color: colors.textSecondary, lineHeight: 1.75, fontSize: '0.95rem' }}
-                >
-                  {text}
+                <Typography variant="body2"
+                  sx={{ color: colors.textSecondary, lineHeight: 1.85, fontSize: '0.92rem',
+                        pl: '36px' }}>
+                  {item.summary}
                 </Typography>
+                {i < content.length - 1 && (
+                  <Box sx={{ mt: 3.5, borderBottom: `1px solid ${colors.border}` }} />
+                )}
               </Box>
             ))}
           </Box>
         </Box>
 
+        {/* 주요 스킬 4개 */}
+        <Box ref={skillRef}
+          sx={{ mb: { xs: 6, md: 8 }, pt: 4, borderTop: `1px solid ${colors.border}`,
+                opacity: skillVisible ? 1 : 0, transform: skillVisible ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          <Typography variant="overline"
+            sx={{ color: colors.textMuted, letterSpacing: 4, fontSize: '0.65rem', display: 'block', mb: 2.5 }}>
+            주요 기술
+          </Typography>
+          <Box sx={{ display: 'flex', gap: { xs: 2, md: 3 }, flexWrap: 'wrap' }}>
+            {skills.map((skill, i) => {
+              const color = CATEGORY_COLOR[skill.category] ?? colors.primary;
+              return (
+                <Tooltip key={skill.id} title={`${skill.name} · ${skill.level}%`} arrow
+                  componentsProps={{ tooltip: { sx: { backgroundColor: colors.primaryDark, fontSize: '0.75rem' } } }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
+                              opacity: skillVisible ? 1 : 0,
+                              transform: skillVisible ? 'translateY(0)' : 'translateY(12px)',
+                              transition: `opacity 0.5s ease ${i * 80}ms, transform 0.5s ease ${i * 80}ms`,
+                              cursor: 'default' }}>
+                    <Box sx={{ width: 52, height: 52, borderRadius: 2, border: `1px solid ${color}30`,
+                                backgroundColor: `${color}10`, display: 'flex', alignItems: 'center',
+                                justifyContent: 'center', fontSize: '1.5rem', transition: 'all 0.2s',
+                                '&:hover': { backgroundColor: `${color}20`, borderColor: `${color}60`,
+                                             transform: 'translateY(-2px)' } }}>
+                      {skill.icon}
+                    </Box>
+                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: colors.textMuted }}>
+                      {skill.name}
+                    </Typography>
+                  </Box>
+                </Tooltip>
+              );
+            })}
+          </Box>
+        </Box>
+
         {/* CTA */}
-        <Box
-          ref={ctaRef}
-          sx={{
-            opacity:   ctaVisible ? 1 : 0,
-            transform: ctaVisible ? 'translateY(0)' : 'translateY(16px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
-          }}
-        >
-          <Button
-            variant="outlined"
-            size="large"
-            onClick={() => navigate('/about')}
-            sx={{
-              borderColor: colors.primaryDark,
-              color: colors.primaryDark,
-              px: 5,
-              py: 1.5,
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              borderRadius: 2,
-              letterSpacing: 0.5,
-              '&:hover': {
-                backgroundColor: `${colors.primary}15`,
-                borderColor: colors.primary,
-              },
-            }}
-          >
+        <Box ref={ctaRef}
+          sx={{ opacity: ctaVisible ? 1 : 0, transform: ctaVisible ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          <Button variant="outlined" size="large" onClick={() => navigate('/about')}
+            sx={{ borderColor: colors.primaryDark, color: colors.primaryDark, px: 5, py: 1.5,
+                  fontSize: '0.9rem', fontWeight: 600, borderRadius: 2, letterSpacing: 0.5,
+                  '&:hover': { backgroundColor: `${colors.primary}15`, borderColor: colors.primary } }}>
             더 알아보기 →
           </Button>
         </Box>

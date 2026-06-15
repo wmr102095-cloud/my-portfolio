@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { colors } from '../theme/theme';
+import { usePortfolio } from '../context/PortfolioContext';
 
-/* ── 스크롤 진입 감지 (AboutSection과 동일 패턴) ── */
-function useFadeIn(threshold = 0.12) {
+function useFadeIn(threshold = 0.1) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -21,235 +23,130 @@ function useFadeIn(threshold = 0.12) {
   return [ref, visible];
 }
 
-/* ── 숙련도 태그 스타일 ── */
-const LEVEL_STYLE = {
-  '실무활용': {
-    bg:   colors.primaryDark,
-    text: '#f5ede3',
-  },
-  '자격증 준비중': {
-    bg:   colors.accent,
-    text: colors.primaryDark,
-  },
-  '학습중': {
-    bg:   'transparent',
-    text: colors.textMuted,
-    border: `1px solid ${colors.border}`,
-  },
+const CATEGORY_META = {
+  Frontend:  { color: '#9f8473', bg: '#9f847320' },
+  Framework: { color: '#5c7a9f', bg: '#5c7a9f20' },
+  Design:    { color: '#9f6478', bg: '#9f647820' },
+  Backend:   { color: '#5f8c6e', bg: '#5f8c6e20' },
+  Tools:     { color: '#72706a', bg: '#72706a20' },
 };
 
-/* ── 스킬 카테고리 데이터 ── */
-const CATEGORIES = [
-  {
-    icon:     '🎨',
-    label:    'Design',
-    skills: [
-      { name: 'Photoshop',   level: '자격증 준비중' },
-      { name: 'Illustrator', level: '자격증 준비중' },
-    ],
-    badge: 'Adobe 자격증 취득 준비중',
-  },
-  {
-    icon:     '💻',
-    label:    'Development',
-    skills: [
-      { name: 'HTML / CSS',  level: '학습중' },
-      { name: 'JavaScript',  level: '학습중' },
-      { name: 'React',       level: '학습중' },
-      { name: 'Supabase',    level: '학습중' },
-    ],
-    badge: null,
-  },
-  {
-    icon:     '🛠️',
-    label:    'Tools',
-    skills: [
-      { name: 'Figma',        level: '실무활용' },
-      { name: 'Git / GitHub', level: '실무활용' },
-      { name: 'Vite',         level: '학습중'   },
-    ],
-    badge: null,
-  },
-];
-
-/* ── 개별 스킬 카드 ── */
-function SkillCard({ icon, label, skills, badge, delay }) {
-  const [ref, visible] = useFadeIn(0.1);
+/* ── 스킬 카드 (홈용 — 심플) ── */
+function HomeSkillCard({ skill, visible, index }) {
+  const meta = CATEGORY_META[skill.category] ?? CATEGORY_META.Tools;
 
   return (
     <Box
-      ref={ref}
       sx={{
         opacity:    visible ? 1 : 0,
         transform:  visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
-        backgroundColor: colors.bgPrimary,
-        border:     `1px solid ${colors.border}`,
+        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms`,
+        p: { xs: 2.5, md: 3 },
+        border: `1px solid ${colors.border}`,
         borderRadius: 3,
-        p:          { xs: 3, md: 3.5 },
-        display:    'flex',
+        backgroundColor: colors.bgPrimary,
+        display: 'flex',
         flexDirection: 'column',
+        gap: 2,
+        transition2: 'border-color 0.2s',
+        '&:hover': { borderColor: meta.color },
       }}
     >
-      {/* 카드 헤더 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-        <Typography sx={{ fontSize: '1.4rem', lineHeight: 1 }}>{icon}</Typography>
-        <Typography
-          sx={{
-            fontFamily: '"Playfair Display", Georgia, serif',
-            fontWeight: 600,
-            fontSize:   '1.1rem',
-            color:      colors.textPrimary,
-          }}
-        >
-          {label}
+      {/* 아이콘 + 이름 + 퍼센트 */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 1.5, backgroundColor: meta.bg,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+            {skill.icon}
+          </Box>
+          <Box>
+            <Typography sx={{ fontWeight: 600, fontSize: '0.95rem', color: colors.textPrimary, lineHeight: 1.2 }}>
+              {skill.name}
+            </Typography>
+            <Typography sx={{ fontSize: '0.68rem', color: meta.color, fontWeight: 600 }}>
+              {skill.category}
+            </Typography>
+          </Box>
+        </Box>
+        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: meta.color }}>
+          {skill.level}%
         </Typography>
       </Box>
 
-      {/* 구분선 */}
-      <Box sx={{ borderTop: `1px solid ${colors.border}`, mb: 2.5 }} />
-
-      {/* 스킬 목록 */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, flexGrow: 1 }}>
-        {skills.map(({ name, level }, i) => {
-          const style = LEVEL_STYLE[level] ?? LEVEL_STYLE['학습중'];
-          return (
-            <Box
-              key={name}
-              sx={{
-                display:        'flex',
-                alignItems:     'center',
-                justifyContent: 'space-between',
-                py:             1.8,
-                borderBottom:   i < skills.length - 1 ? `1px solid ${colors.border}` : 'none',
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{ color: colors.textSecondary, fontWeight: 500, fontSize: '0.9rem' }}
-              >
-                {name}
-              </Typography>
-              <Box
-                sx={{
-                  px:           1.5,
-                  py:           0.35,
-                  borderRadius: 20,
-                  backgroundColor: style.bg,
-                  border:       style.border ?? 'none',
-                  color:        style.text,
-                  fontSize:     '0.7rem',
-                  fontWeight:   600,
-                  letterSpacing: 0.3,
-                  whiteSpace:   'nowrap',
-                }}
-              >
-                {level}
-              </Box>
-            </Box>
-          );
-        })}
-      </Box>
-
-      {/* Adobe 자격증 배지 */}
-      {badge && (
+      {/* 프로그래스 바 */}
+      <Box sx={{ height: 5, borderRadius: 3, backgroundColor: `${meta.color}20`, overflow: 'hidden' }}>
         <Box
           sx={{
-            mt:           3,
-            pt:           2,
-            borderTop:    `1px solid ${colors.border}`,
-            display:      'flex',
-            alignItems:   'center',
-            gap:          1,
+            height: '100%',
+            borderRadius: 3,
+            backgroundColor: meta.color,
+            width: visible ? `${skill.level}%` : '0%',
+            transition: `width 0.9s cubic-bezier(0.4, 0, 0.2, 1) ${index * 120 + 200}ms`,
           }}
-        >
-          <Box
-            sx={{
-              width:           8,
-              height:          8,
-              borderRadius:    '50%',
-              backgroundColor: colors.accent,
-              flexShrink:      0,
-            }}
-          />
-          <Typography variant="caption" sx={{ color: colors.textMuted, fontSize: '0.75rem' }}>
-            {badge}
-          </Typography>
-        </Box>
-      )}
+        />
+      </Box>
     </Box>
   );
 }
 
-/* ── Skill 섹션 ── */
+/* ── Skill 섹션 (홈) ── */
 export default function SkillSection() {
+  const navigate = useNavigate();
+  const { getHomeData } = usePortfolio();
   const [headerRef, headerVisible] = useFadeIn(0.1);
+  const [gridRef, gridVisible]     = useFadeIn(0.08);
+  const [ctaRef, ctaVisible]       = useFadeIn(0.1);
+
+  const { skills: topSkills } = getHomeData();
 
   return (
-    <Box
-      component="section"
-      id="skills"
-      sx={{
-        width: '100%',
-        py:    { xs: 10, md: 14 },
-        px:    { xs: 2, md: 4 },
-        backgroundColor: colors.bgSecondary,
-      }}
-    >
+    <Box component="section" id="skills"
+      sx={{ width: '100%', py: { xs: 10, md: 14 }, px: { xs: 2, md: 4 },
+            backgroundColor: colors.bgSecondary }}>
       <Container maxWidth="lg">
 
-        {/* 섹션 헤더 */}
-        <Box
-          ref={headerRef}
-          sx={{
-            mb:         { xs: 7, md: 9 },
-            opacity:    headerVisible ? 1 : 0,
-            transform:  headerVisible ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'opacity 0.6s ease, transform 0.6s ease',
-          }}
-        >
-          <Typography
-            variant="overline"
-            sx={{ color: colors.primary, letterSpacing: 5, fontSize: '0.68rem', fontWeight: 600, display: 'block', mb: 2 }}
-          >
+        {/* 헤더 */}
+        <Box ref={headerRef}
+          sx={{ mb: { xs: 7, md: 9 }, opacity: headerVisible ? 1 : 0,
+                transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          <Typography variant="overline"
+            sx={{ color: colors.primary, letterSpacing: 5, fontSize: '0.68rem', fontWeight: 600, display: 'block', mb: 2 }}>
             Skills
           </Typography>
-          <Box
-            sx={{
-              display:     'flex',
-              alignItems:  'flex-end',
-              justifyContent: 'space-between',
-              flexWrap:    'wrap',
-              gap:         3,
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: { xs: '2.4rem', md: '3.2rem' } }}
-            >
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 3 }}>
+            <Typography variant="h2"
+              sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: { xs: '2.4rem', md: '3.2rem' } }}>
               무엇을<br />할 수 있나요
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: colors.textMuted, maxWidth: 300, lineHeight: 1.9, fontSize: '0.92rem', pb: 0.5 }}
-            >
-              디자인 툴과 개발 스택을 함께 다룹니다.<br />
-              두 영역 사이의 언어를 모두 구사합니다.
+            <Typography variant="body2"
+              sx={{ color: colors.textMuted, maxWidth: 300, lineHeight: 1.9, fontSize: '0.92rem', pb: 0.5 }}>
+              숙련도 상위 {topSkills.length}개 기술입니다.<br />
+              전체 스킬은 About Me에서 확인하세요.
             </Typography>
           </Box>
         </Box>
 
-        {/* 카테고리 카드 3개 */}
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' },
-            gap:     { xs: 3, md: 4 },
-          }}
-        >
-          {CATEGORIES.map((cat, i) => (
-            <SkillCard key={cat.label} {...cat} delay={i * 150} />
+        {/* 상위 4개 스킬 카드 */}
+        <Box ref={gridRef}
+          sx={{ display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+                gap: { xs: 2.5, md: 3 }, mb: { xs: 6, md: 8 } }}>
+          {topSkills.map((skill, i) => (
+            <HomeSkillCard key={skill.id} skill={skill} visible={gridVisible} index={i} />
           ))}
+        </Box>
+
+        {/* CTA */}
+        <Box ref={ctaRef}
+          sx={{ opacity: ctaVisible ? 1 : 0, transform: ctaVisible ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          <Button variant="outlined" size="large" onClick={() => navigate('/about')}
+            sx={{ borderColor: colors.primaryDark, color: colors.primaryDark, px: 5, py: 1.5,
+                  fontSize: '0.9rem', fontWeight: 600, borderRadius: 2, letterSpacing: 0.5,
+                  '&:hover': { backgroundColor: `${colors.primary}15`, borderColor: colors.primary } }}>
+            전체 스킬 보기 →
+          </Button>
         </Box>
 
       </Container>
