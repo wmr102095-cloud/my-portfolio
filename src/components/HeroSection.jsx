@@ -73,7 +73,7 @@ export default function HeroSection() {
         `,
       }}
     >
-      <Container maxWidth="md" sx={{ py: { xs: 14, md: 18 }, px: { xs: 3, md: 4 } }}>
+      <Container maxWidth="md" sx={{ py: { xs: 14, md: 18 }, px: { xs: 3, md: 4 }, minWidth: 0, width: '100%' }}>
 
         {/* 오버라인 */}
         <Typography
