@@ -122,35 +122,31 @@ export default function HeroSection() {
           {/* 구분선 */}
           <Box sx={{ width: 48, height: '2px', backgroundColor: colors.primary, mb: 3, borderRadius: 1 }} />
 
-          {/* 타이핑 줄 */}
-          <Box
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              minHeight: { xs: '2rem', sm: '2.4rem', md: '2.8rem' },
-            }}
-          >
+          {/* 타이핑 줄 — inline 방식으로 자연스럽게 줄바꿈 허용 */}
+          <Box sx={{ lineHeight: 1.5 }}>
             <Typography
+              component="span"
               sx={{
-                fontSize: { xs: '1.15rem', sm: '1.4rem', md: '1.65rem' },
-                fontWeight: 500,
-                lineHeight: 1.3,
-                color: colors.primary,
-                fontStyle: 'italic',
+                fontSize:   { xs: '1.2rem', sm: '1.45rem', md: '1.7rem' },
+                fontWeight: 600,
+                color:      colors.textSecondary,
+                fontStyle:  'italic',
               }}
             >
               {displayed}
             </Typography>
 
-            {/* 커서 */}
+            {/* 커서 — 텍스트 바로 뒤에 인라인으로 붙음 */}
             <Box
+              component="span"
               sx={{
-                width: { xs: '2px', md: '2px' },
-                height: { xs: '1.3rem', sm: '1.6rem', md: '1.9rem' },
+                display:         'inline-block',
+                width:           '2px',
+                height:          '1.1em',
                 backgroundColor: colors.primary,
-                ml: '5px',
-                flexShrink: 0,
-                animation: 'cursorBlink 1s step-end infinite',
+                ml:              '4px',
+                verticalAlign:   'middle',
+                animation:       'cursorBlink 1s step-end infinite',
                 '@keyframes cursorBlink': {
                   '0%, 100%': { opacity: 1 },
                   '50%':      { opacity: 0 },
