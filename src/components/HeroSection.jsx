@@ -1,10 +1,24 @@
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { colors } from '../theme/theme';
 
+const LINES = [
+  '보기 좋아야 쓰고 싶어지고,',
+  '쓰고 싶어야 기억에 남습니다.',
+  '그런 사이트를 만듭니다.',
+];
+
 export default function HeroSection() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), 200);
+    return () => clearTimeout(t);
+  }, []);
+
   const scrollTo = (id) =>
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -40,6 +54,9 @@ export default function HeroSection() {
             fontWeight: 600,
             mb: 3,
             display: 'block',
+            opacity:    show ? 1 : 0,
+            transform:  show ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'opacity 0.6s ease 0ms, transform 0.6s ease 0ms',
           }}
         >
           Product Designer
@@ -47,61 +64,86 @@ export default function HeroSection() {
 
         {/* 헤드라인 */}
         <Box sx={{ mb: { xs: 5, md: 7 } }}>
-          {/* 인사 (흐린 색) */}
+
+          {/* 인사 */}
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
+              fontSize:   { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
               fontWeight: 700,
               lineHeight: 1.15,
-              color: colors.textMuted,
+              color:      colors.textMuted,
+              opacity:    show ? 1 : 0,
+              transform:  show ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.7s ease 150ms, transform 0.7s ease 150ms',
             }}
           >
             안녕하세요,
           </Typography>
 
-          {/* 이름 (진한 색, 고정) */}
+          {/* 이름 */}
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2.8rem', sm: '3.8rem', md: '5rem' },
+              fontSize:   { xs: '2.8rem', sm: '3.8rem', md: '5rem' },
               fontWeight: 700,
               lineHeight: 1.05,
-              color: colors.textPrimary,
-              mb: 3,
+              color:      colors.textPrimary,
+              mb:         3,
+              opacity:    show ? 1 : 0,
+              transform:  show ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.7s ease 350ms, transform 0.7s ease 350ms',
             }}
           >
             김재우입니다.
           </Typography>
 
           {/* 구분선 */}
-          <Box sx={{ width: 48, height: '2px', backgroundColor: colors.primary, mb: 3, borderRadius: 1 }} />
-
-          {/* 슬로건 — 3문장 정적 표시 */}
-          <Typography
+          <Box
             sx={{
-              fontSize:   { xs: '1.05rem', sm: '1.25rem', md: '1.45rem' },
-              fontWeight: 500,
-              color:      colors.textSecondary,
-              fontStyle:  'italic',
-              lineHeight: 1.9,
+              width:           show ? 48 : 0,
+              height:          '2px',
+              backgroundColor: colors.primary,
+              mb:              3,
+              borderRadius:    1,
+              transition:      'width 0.6s ease 600ms',
             }}
-          >
-            보기 좋아야 쓰고 싶어지고,<br />
-            쓰고 싶어야 기억에 남습니다.<br />
-            그런 사이트를 만듭니다.
-          </Typography>
+          />
+
+          {/* 슬로건 3줄 — 순서대로 등장 */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {LINES.map((line, i) => (
+              <Typography
+                key={i}
+                sx={{
+                  fontSize:   { xs: '1.05rem', sm: '1.25rem', md: '1.45rem' },
+                  fontWeight: 500,
+                  color:      colors.textSecondary,
+                  fontStyle:  'italic',
+                  lineHeight: 1.85,
+                  opacity:    show ? 1 : 0,
+                  transform:  show ? 'translateX(0)' : 'translateX(-18px)',
+                  transition: `opacity 0.65s ease ${700 + i * 220}ms, transform 0.65s ease ${700 + i * 220}ms`,
+                }}
+              >
+                {line}
+              </Typography>
+            ))}
+          </Box>
         </Box>
 
         {/* 서브텍스트 */}
         <Typography
           variant="body1"
           sx={{
-            color: colors.textMuted,
-            fontSize: { xs: '0.95rem', md: '1.05rem' },
+            color:      colors.textMuted,
+            fontSize:   { xs: '0.95rem', md: '1.05rem' },
             lineHeight: 1.9,
-            maxWidth: 400,
-            mb: { xs: 5, md: 7 },
+            maxWidth:   400,
+            mb:         { xs: 5, md: 7 },
+            opacity:    show ? 1 : 0,
+            transform:  show ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'opacity 0.6s ease 1350ms, transform 0.6s ease 1350ms',
           }}
         >
           건축과 인테리어에서 시작해 웹으로 온,<br />
@@ -109,7 +151,16 @@ export default function HeroSection() {
         </Typography>
 
         {/* CTA 버튼 */}
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Box
+          sx={{
+            display:    'flex',
+            gap:        2,
+            flexWrap:   'wrap',
+            opacity:    show ? 1 : 0,
+            transform:  show ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'opacity 0.6s ease 1550ms, transform 0.6s ease 1550ms',
+          }}
+        >
           <Button
             variant="contained"
             size="large"
