@@ -122,29 +122,26 @@ export default function HeroSection() {
           {/* 구분선 */}
           <Box sx={{ width: 48, height: '2px', backgroundColor: colors.primary, mb: 3, borderRadius: 1 }} />
 
-          {/* 타이핑 줄 — inline 방식으로 자연스럽게 줄바꿈 허용 */}
-          <Box sx={{ lineHeight: 1.5 }}>
-            <Typography
-              component="span"
-              sx={{
-                fontSize:   { xs: '1.2rem', sm: '1.45rem', md: '1.7rem' },
-                fontWeight: 600,
-                color:      colors.textSecondary,
-                fontStyle:  'italic',
-              }}
-            >
-              {displayed}
-            </Typography>
-
-            {/* 커서 — 텍스트 바로 뒤에 인라인으로 붙음 */}
+          {/* 타이핑 줄 — Typography(block) 안에 커서를 넣어 줄바꿈 보장 */}
+          <Typography
+            sx={{
+              fontSize:   { xs: '1.15rem', sm: '1.4rem', md: '1.65rem' },
+              fontWeight: 600,
+              color:      colors.textSecondary,
+              fontStyle:  'italic',
+              lineHeight: 1.6,
+              wordBreak:  'keep-all',
+            }}
+          >
+            {displayed}
             <Box
               component="span"
               sx={{
                 display:         'inline-block',
                 width:           '2px',
-                height:          '1.1em',
+                height:          '0.85em',
                 backgroundColor: colors.primary,
-                ml:              '4px',
+                ml:              '3px',
                 verticalAlign:   'middle',
                 animation:       'cursorBlink 1s step-end infinite',
                 '@keyframes cursorBlink': {
@@ -153,7 +150,7 @@ export default function HeroSection() {
                 },
               }}
             />
-          </Box>
+          </Typography>
         </Box>
 
         {/* 서브텍스트 */}
