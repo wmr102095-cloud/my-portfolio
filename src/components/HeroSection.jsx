@@ -62,11 +62,12 @@ export default function HeroSection() {
       sx={{
         minHeight: '100vh',
         width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        boxSizing: 'border-box',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        display: 'block',
+        pt: { xs: '22vh', md: '28vh' },
+        pb: { xs: '10vh', md: '12vh' },
         background: `
           radial-gradient(ellipse at 15% 80%, ${colors.accent}55 0%, transparent 55%),
           radial-gradient(ellipse at 85% 20%, ${colors.primaryDark}18 0%, transparent 50%),
@@ -74,7 +75,7 @@ export default function HeroSection() {
         `,
       }}
     >
-      <Container maxWidth="md" sx={{ py: { xs: 14, md: 18 }, px: { xs: 3, md: 4 }, minWidth: 0, width: '100%' }}>
+      <Container maxWidth="md" sx={{ px: { xs: 3, md: 4 } }}>
 
         {/* 오버라인 */}
         <Typography
@@ -126,11 +127,13 @@ export default function HeroSection() {
           {/* 타이핑 줄 — Typography(block) 안에 커서를 넣어 줄바꿈 보장 */}
           <Typography
             sx={{
-              fontSize:   { xs: '1.15rem', sm: '1.4rem', md: '1.65rem' },
-              fontWeight: 600,
-              color:      colors.textSecondary,
-              fontStyle:  'italic',
-              lineHeight: 1.6,
+              fontSize:     { xs: '1.1rem', sm: '1.35rem', md: '1.6rem' },
+              fontWeight:   600,
+              color:        colors.textSecondary,
+              fontStyle:    'italic',
+              lineHeight:   1.6,
+              overflowWrap: 'break-word',
+              wordBreak:    'break-word',
             }}
           >
             {displayed}
