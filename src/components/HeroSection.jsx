@@ -37,6 +37,64 @@ const BG_DOTS = [
   { top: '48%', left:  '1%',  size: 3 },
 ];
 
+const ROLES       = ['Frontend Developer', 'UI / UX Designer', 'React Builder', 'Supabase Developer'];
+const MORPH_WORDS = ['개발자', '디자이너', '크리에이터'];
+
+/* ── 타이핑 훅: setTimeout 기반 타이핑/지우기 사이클 ── */
+function useTypewriter(words, { typingMs = 75, erasingMs = 42, pauseMs = 2000 } = {}) {
+  const [text,    setText]    = useState('');
+  const [wIdx,    setWIdx]    = useState(0);
+  const [erasing, setErasing] = useState(false);
+
+  useEffect(() => {
+    const target = words[wIdx % words.length];
+    let t;
+    if (!erasing) {
+      if (text === target) {
+        t = setTimeout(() => setErasing(true), pauseMs);
+      } else {
+        t = setTimeout(
+          () => setText(target.slice(0, text.length + 1)),
+          typingMs + Math.random() * 28,
+        );
+      }
+    } else {
+      if (text === '') {
+        setWIdx(i => (i + 1) % words.length);
+        setErasing(false);
+      } else {
+        t = setTimeout(() => setText(s => s.slice(0, -1)), erasingMs);
+      }
+    }
+    return () => clearTimeout(t);
+  }, [text, wIdx, erasing, words, typingMs, erasingMs, pauseMs]);
+
+  return text;
+}
+
+/* ── 텍스트 모핑 훅: 단어 전환 + entering/exiting 상태 ── */
+function useMorphText(words, interval = 2600) {
+  const [idx,      setIdx]      = useState(0);
+  const [entering, setEntering] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setEntering(false), interval);
+    return () => clearTimeout(t);
+  }, [idx, interval]);
+
+  useEffect(() => {
+    if (!entering) {
+      const t = setTimeout(() => {
+        setIdx(i => (i + 1) % words.length);
+        setEntering(true);
+      }, 380);
+      return () => clearTimeout(t);
+    }
+  }, [entering, words.length]);
+
+  return { word: words[idx], entering, idx };
+}
+
 /* ── rAF 스로틀 스크롤 훅 (패럴렉스 공용) ── */
 function useScrollY() {
   const [scrollY, setScrollY] = useState(0);
@@ -66,6 +124,10 @@ export default function HeroSection() {
   const bgY2     = scrollY * 0.11;   // 배경 링 2
   const dotsY    = scrollY * 0.08;   // 배경 도트 (중간층)
   const orbitY   = scrollY * -0.07;  // 오빗 비주얼 (앞으로 튀어나오는 효과)
+
+  const typedRole                                      = useTypewriter(ROLES);
+  const { word: morphWord, entering: morphEntering, idx: morphIdx } = useMorphText(MORPH_WORDS, 2600);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -191,7 +253,24 @@ export default function HeroSection() {
                 transition: 'opacity 0.6s ease 0ms, transform 0.6s ease 0ms',
               }}
             >
-              Frontend Developer & UI Designer · 김재우
+              {typedRole}
+              {/* 깜박이는 타이핑 커서 */}
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-block',
+                  width: '1.5px', height: '0.9em',
+                  backgroundColor: colors.primary,
+                  mx: 0.4,
+                  verticalAlign: 'middle',
+                  animation: 'cursorBlink 1s step-end infinite',
+                  '@keyframes cursorBlink': {
+                    '0%, 100%': { opacity: 1 },
+                    '50%':      { opacity: 0 },
+                  },
+                }}
+              />
+              {' · 김재우'}
             </Typography>
 
             {/* 메인 H1 — 그라데이션 텍스트 */}
@@ -202,10 +281,17 @@ export default function HeroSection() {
                 fontWeight: 700,
                 lineHeight: 1.1,
                 mb: 1,
-                background: `linear-gradient(135deg, ${colors.textPrimary} 20%, ${colors.primary} 100%)`,
+                background: `linear-gradient(135deg, ${colors.textPrimary} 0%, ${colors.primary} 35%, ${colors.accent} 65%, ${colors.primaryDark} 100%)`,
+                backgroundSize: '300% 100%',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
+                animation: 'gradientFlow 5s ease infinite',
+                '@keyframes gradientFlow': {
+                  '0%':   { backgroundPosition: '0% 50%' },
+                  '50%':  { backgroundPosition: '100% 50%' },
+                  '100%': { backgroundPosition: '0% 50%' },
+                },
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(24px)',
                 transition: 'opacity 0.7s ease 150ms, transform 0.7s ease 150ms',
@@ -222,7 +308,7 @@ export default function HeroSection() {
                 fontWeight: 700,
                 lineHeight: 1.15,
                 color:      colors.textMuted,
-                mb: 3,
+                mb: 1.5,
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'opacity 0.7s ease 350ms, transform 0.7s ease 350ms',
@@ -230,6 +316,64 @@ export default function HeroSection() {
             >
               설계부터 배포까지, 혼자.
             </Typography>
+
+            {/* ── 역할 모핑 텍스트: < 개발자 /> ── */}
+            <Box sx={{
+              display: 'flex', alignItems: 'center', gap: 0.8,
+              mb: 2,
+              opacity:    show ? 1 : 0,
+              transition: 'opacity 0.6s ease 500ms',
+            }}>
+              <Box component="span" sx={{
+                fontFamily: 'monospace',
+                fontSize: { xs: '1rem', md: '1.15rem' },
+                color: `${colors.accent}`,
+                opacity: 0.65, fontWeight: 400,
+                userSelect: 'none',
+              }}>
+                {'<'}
+              </Box>
+              <Box sx={{
+                display: 'inline-flex',
+                minWidth: { xs: 76, sm: 90, md: 105 },
+              }}>
+                {morphWord.split('').map((char, i) => (
+                  <Box
+                    key={`${morphIdx}-${i}`}
+                    component="span"
+                    sx={{
+                      display: 'inline-block',
+                      fontFamily: '"Playfair Display", Georgia, serif',
+                      fontSize: { xs: '1.05rem', sm: '1.2rem', md: '1.35rem' },
+                      fontWeight: 700,
+                      color: colors.primary,
+                      animation: morphEntering
+                        ? `mIn 0.55s cubic-bezier(0.34,1.56,0.64,1) ${i * 55}ms both`
+                        : `mOut 0.28s ease ${i * 22}ms both`,
+                      '@keyframes mIn': {
+                        from: { opacity: 0, transform: 'translateY(110%)', filter: 'blur(8px)' },
+                        to:   { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
+                      },
+                      '@keyframes mOut': {
+                        from: { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
+                        to:   { opacity: 0, transform: 'translateY(-80%)', filter: 'blur(6px)' },
+                      },
+                    }}
+                  >
+                    {char}
+                  </Box>
+                ))}
+              </Box>
+              <Box component="span" sx={{
+                fontFamily: 'monospace',
+                fontSize: { xs: '1rem', md: '1.15rem' },
+                color: `${colors.accent}`,
+                opacity: 0.65, fontWeight: 400,
+                userSelect: 'none',
+              }}>
+                {'/>'}
+              </Box>
+            </Box>
 
             {/* 그라데이션 구분선 */}
             <Box sx={{
@@ -241,24 +385,31 @@ export default function HeroSection() {
               transition: 'width 0.6s ease 600ms',
             }} />
 
-            {/* 슬로건 3줄 */}
+            {/* 슬로건 3줄 — 글자별 순차 등장 */}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: { xs: 4, md: 5 } }}>
-              {LINES.map((line, i) => (
-                <Typography
-                  key={i}
-                  sx={{
-                    fontSize:   { xs: '1rem', sm: '1.2rem', md: '1.35rem' },
-                    fontWeight: 500,
-                    color:      colors.textSecondary,
-                    fontStyle:  'italic',
-                    lineHeight: 1.85,
-                    opacity:    show ? 1 : 0,
-                    transform:  show ? 'translateX(0)' : 'translateX(-18px)',
-                    transition: `opacity 0.65s ease ${700 + i * 220}ms, transform 0.65s ease ${700 + i * 220}ms`,
-                  }}
-                >
-                  {line}
-                </Typography>
+              {LINES.map((line, lineIdx) => (
+                <Box key={lineIdx} sx={{ lineHeight: 1.85 }}>
+                  {[...line].map((char, charIdx) => (
+                    <Box
+                      key={charIdx}
+                      component="span"
+                      sx={{
+                        display: 'inline-block',
+                        fontSize:   { xs: '1rem', sm: '1.2rem', md: '1.35rem' },
+                        fontWeight: 500,
+                        color:      colors.textSecondary,
+                        fontStyle:  'italic',
+                        whiteSpace: 'pre',
+                        opacity:    show ? 1 : 0,
+                        transform:  show ? 'translateY(0)' : 'translateY(10px)',
+                        transition: `opacity 0.42s ease ${620 + lineIdx * 170 + charIdx * 22}ms,
+                                     transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94) ${620 + lineIdx * 170 + charIdx * 22}ms`,
+                      }}
+                    >
+                      {char}
+                    </Box>
+                  ))}
+                </Box>
               ))}
             </Box>
 
