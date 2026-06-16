@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -351,32 +350,7 @@ export default function HeroSection() {
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title="LinkedIn 보기" arrow placement="top">
-                  <IconButton
-                    component="a"
-                    href="https://linkedin.com/in/wmr102095"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn 프로필"
-                    sx={{
-                      color: colors.textMuted,
-                      width: 40, height: 40,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 2,
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        color: '#0077B5',
-                        borderColor: '#0077B5',
-                        backgroundColor: '#0077B510',
-                        transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
-                    <LinkedInIcon sx={{ fontSize: '1.1rem' }} />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="이메일 보내기" arrow placement="top">
+<Tooltip title="이메일 보내기" arrow placement="top">
                   <IconButton
                     component="a"
                     href="mailto:wmr102095@gmail.com"
