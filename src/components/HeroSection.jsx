@@ -45,7 +45,7 @@ export default function HeroSection() {
     >
       <Container maxWidth="md" sx={{ px: { xs: 3, md: 4 } }}>
 
-        {/* 오버라인 */}
+        {/* 오버라인 — 이름 포함 */}
         <Typography
           variant="overline"
           sx={{
@@ -60,43 +60,43 @@ export default function HeroSection() {
             transition: 'opacity 0.6s ease 0ms, transform 0.6s ease 0ms',
           }}
         >
-          Frontend Developer & UI Designer
+          Frontend Developer & UI Designer · 김재우
         </Typography>
 
         {/* 헤드라인 */}
         <Box sx={{ mb: { xs: 5, md: 7 } }}>
 
-          {/* 인사 */}
+          {/* 기술 스택 — 메인 헤드라인 */}
           <Typography
             variant="h1"
             sx={{
-              fontSize:   { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
+              fontSize:   { xs: '2.2rem', sm: '3rem', md: '3.8rem' },
               fontWeight: 700,
-              lineHeight: 1.15,
-              color:      colors.textMuted,
+              lineHeight: 1.1,
+              color:      colors.textPrimary,
               opacity:    show ? 1 : 0,
               transform:  show ? 'translateY(0)' : 'translateY(20px)',
               transition: 'opacity 0.7s ease 150ms, transform 0.7s ease 150ms',
             }}
           >
-            안녕하세요,
+            React · Supabase · MUI
           </Typography>
 
-          {/* 이름 */}
+          {/* 역량 선언 */}
           <Typography
-            variant="h1"
+            variant="h2"
             sx={{
-              fontSize:   { xs: '2.8rem', sm: '3.8rem', md: '5rem' },
+              fontSize:   { xs: '1.5rem', sm: '2rem', md: '2.6rem' },
               fontWeight: 700,
-              lineHeight: 1.05,
-              color:      colors.textPrimary,
+              lineHeight: 1.15,
+              color:      colors.textMuted,
               mb:         3,
               opacity:    show ? 1 : 0,
               transform:  show ? 'translateY(0)' : 'translateY(20px)',
               transition: 'opacity 0.7s ease 350ms, transform 0.7s ease 350ms',
             }}
           >
-            김재우입니다.
+            설계부터 배포까지, 혼자.
           </Typography>
 
           {/* 구분선 */}
