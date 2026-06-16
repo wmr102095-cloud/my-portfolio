@@ -3,7 +3,13 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Divider from '@mui/material/Divider';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import DownloadIcon from '@mui/icons-material/Download';
+import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { colors } from '../theme/theme';
 
@@ -224,88 +230,188 @@ export default function HeroSection() {
               디자인 감각을 화면 위에서 이어가고 있습니다.
             </Typography>
 
-            {/* CTA 버튼 */}
+            {/* ── CTA 버튼 영역 ── */}
             <Box sx={{
-              display:   'flex',
-              gap:       2,
-              flexWrap:  'wrap',
-              opacity:   show ? 1 : 0,
-              transform: show ? 'translateY(0)' : 'translateY(12px)',
+              opacity:    show ? 1 : 0,
+              transform:  show ? 'translateY(0)' : 'translateY(12px)',
               transition: 'opacity 0.6s ease 1550ms, transform 0.6s ease 1550ms',
             }}>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => scrollTo('projects')}
-                sx={{
-                  backgroundColor: colors.primaryDark,
-                  color: '#f5ede3',
-                  px: { xs: 3.5, md: 4.5 },
-                  py: 1.5,
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  letterSpacing: 0.5,
-                  boxShadow: `0 4px 20px ${colors.primaryDark}30`,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: colors.primary,
-                    boxShadow: `0 8px 28px ${colors.primaryDark}40`,
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                프로젝트 보기
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => scrollTo('contact')}
-                sx={{
-                  borderColor: `${colors.primary}80`,
-                  color: colors.primaryDark,
-                  px: { xs: 3.5, md: 4.5 },
-                  py: 1.5,
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  letterSpacing: 0.5,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    borderColor: colors.primaryDark,
-                    backgroundColor: `${colors.primary}12`,
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                연락하기
-              </Button>
-              <Button
-                variant="text"
-                size="large"
-                component="a"
-                href="https://github.com/wmr102095-cloud"
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<GitHubIcon sx={{ fontSize: '1.1rem !important' }} />}
-                sx={{
-                  color: colors.textMuted,
-                  px: { xs: 2.5, md: 3 },
-                  py: 1.5,
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  letterSpacing: 0.5,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    color: colors.textPrimary,
-                    backgroundColor: `${colors.primaryDark}10`,
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                GitHub
-              </Button>
+
+              {/* 주요 버튼 행 */}
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2.5 }}>
+
+                {/* Primary CTA */}
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => scrollTo('projects')}
+                  sx={{
+                    backgroundColor: colors.primaryDark,
+                    color: '#f5ede3',
+                    px: { xs: 3.5, md: 4.5 },
+                    py: 1.5,
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    borderRadius: 2,
+                    letterSpacing: 0.5,
+                    boxShadow: `0 4px 20px ${colors.primaryDark}35`,
+                    transition: 'all 0.22s ease',
+                    '&:hover': {
+                      backgroundColor: colors.primary,
+                      boxShadow: `0 8px 28px ${colors.primaryDark}45`,
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': { transform: 'translateY(0)' },
+                  }}
+                >
+                  프로젝트 보기
+                </Button>
+
+                {/* Secondary CTA */}
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => scrollTo('contact')}
+                  sx={{
+                    borderColor: `${colors.primary}70`,
+                    color: colors.primaryDark,
+                    px: { xs: 3.5, md: 4.5 },
+                    py: 1.5,
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    borderRadius: 2,
+                    letterSpacing: 0.5,
+                    transition: 'all 0.22s ease',
+                    '&:hover': {
+                      borderColor: colors.primaryDark,
+                      backgroundColor: `${colors.primary}12`,
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': { transform: 'translateY(0)' },
+                  }}
+                >
+                  연락하기
+                </Button>
+
+                {/* 이력서 다운로드 */}
+                <Button
+                  variant="text"
+                  size="large"
+                  component="a"
+                  href={`${import.meta.env.BASE_URL}resume.pdf`}
+                  download="김재우_이력서.pdf"
+                  startIcon={<DownloadIcon sx={{ fontSize: '1rem !important' }} />}
+                  sx={{
+                    color: colors.textMuted,
+                    px: { xs: 2.5, md: 3 },
+                    py: 1.5,
+                    fontSize: '0.9rem',
+                    fontWeight: 600,
+                    borderRadius: 2,
+                    letterSpacing: 0.5,
+                    border: `1px dashed ${colors.primary}40`,
+                    transition: 'all 0.22s ease',
+                    '&:hover': {
+                      color: colors.primaryDark,
+                      borderColor: colors.primary,
+                      backgroundColor: `${colors.primary}08`,
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:active': { transform: 'translateY(0)' },
+                  }}
+                >
+                  이력서
+                </Button>
+              </Box>
+
+              {/* 소셜 아이콘 행 */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Tooltip title="GitHub 보기" arrow placement="top">
+                  <IconButton
+                    component="a"
+                    href="https://github.com/wmr102095-cloud"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub 프로필"
+                    sx={{
+                      color: colors.textMuted,
+                      width: 40, height: 40,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: 2,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        color: colors.textPrimary,
+                        borderColor: colors.textPrimary,
+                        backgroundColor: `${colors.primaryDark}10`,
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <GitHubIcon sx={{ fontSize: '1.1rem' }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="LinkedIn 보기" arrow placement="top">
+                  <IconButton
+                    component="a"
+                    href="https://linkedin.com/in/wmr102095"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn 프로필"
+                    sx={{
+                      color: colors.textMuted,
+                      width: 40, height: 40,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: 2,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        color: '#0077B5',
+                        borderColor: '#0077B5',
+                        backgroundColor: '#0077B510',
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <LinkedInIcon sx={{ fontSize: '1.1rem' }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="이메일 보내기" arrow placement="top">
+                  <IconButton
+                    component="a"
+                    href="mailto:wmr102095@gmail.com"
+                    aria-label="이메일 보내기"
+                    sx={{
+                      color: colors.textMuted,
+                      width: 40, height: 40,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: 2,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        color: colors.primary,
+                        borderColor: colors.primary,
+                        backgroundColor: `${colors.primary}10`,
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <EmailIcon sx={{ fontSize: '1.1rem' }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Divider
+                  orientation="vertical"
+                  flexItem
+                  sx={{ borderColor: colors.border, mx: 1, my: 0.5 }}
+                />
+
+                <Typography
+                  variant="caption"
+                  sx={{ color: colors.textMuted, fontSize: '0.75rem', letterSpacing: 0.3 }}
+                >
+                  wmr102095@gmail.com
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
