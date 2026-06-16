@@ -49,7 +49,7 @@ const PROJECTS = [
   },
 ];
 
-function ProjectCard({ title, desc, tech, live, icon, gradient, delay }) {
+function ProjectCard({ title, desc, tech, live, icon, gradient, delay, index }) {
   const [ref, visible] = useFadeIn(0.1);
   const [hovered, setHovered] = useState(false);
 
@@ -60,8 +60,10 @@ function ProjectCard({ title, desc, tech, live, icon, gradient, delay }) {
       onMouseLeave={() => setHovered(false)}
       sx={{
         opacity:    visible ? 1 : 0,
-        transform:  visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms, border-color 0.25s, box-shadow 0.3s`,
+        transform:  visible
+          ? 'translate3d(0, 0, 0)'
+          : `translate3d(${index % 2 === 0 ? -30 : 30}px, 22px, 0)`,
+        transition: `opacity 0.65s ease ${delay}ms, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}ms, border-color 0.25s, box-shadow 0.3s`,
         border:     `1px solid ${colors.border}`,
         borderRadius: 3,
         overflow:   'hidden',
@@ -229,7 +231,7 @@ export default function ProjectsSection() {
           }}
         >
           {PROJECTS.map((p, i) => (
-            <ProjectCard key={p.title} {...p} delay={i * 140} />
+            <ProjectCard key={p.title} {...p} delay={i * 140} index={i} />
           ))}
         </Box>
 

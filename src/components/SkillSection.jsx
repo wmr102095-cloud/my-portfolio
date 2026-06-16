@@ -60,8 +60,10 @@ const HomeSkillCard = memo(function HomeSkillCard({ skill, visible, index }) {
       aria-label={`${skill.name} ${displayLevel}%`}
       sx={{
         opacity:    visible ? 1 : 0,
-        transform:  visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms, border-color 0.22s, box-shadow 0.3s`,
+        transform:  visible
+          ? 'translate3d(0, 0, 0)'
+          : `translate3d(${index % 2 === 0 ? -28 : 28}px, 20px, 0)`,
+        transition: `opacity 0.65s ease ${index * 120}ms, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 120}ms, border-color 0.22s, box-shadow 0.3s`,
         p: { xs: 2.5, md: 3 },
         border: `1px solid ${colors.border}`,
         borderRadius: 3,
@@ -168,6 +170,15 @@ export default memo(function SkillSection() {
               전체 스킬은 About Me에서 확인하세요.
             </Typography>
           </Box>
+          {/* 스크롤 트리거 리빌 바 */}
+          <Box sx={{
+            width: headerVisible ? 72 : 0,
+            height: '3px',
+            background: `linear-gradient(to right, ${colors.primary}, ${colors.accent})`,
+            borderRadius: 2,
+            mt: 3,
+            transition: 'width 0.9s cubic-bezier(0.4, 0, 0.2, 1) 400ms',
+          }} />
         </Box>
 
         {/* 상위 4개 스킬 카드 */}

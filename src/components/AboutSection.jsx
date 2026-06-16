@@ -242,8 +242,12 @@ export default memo(function AboutSection() {
 
           {/* 프로필 카드 */}
           <Box ref={profileRef}
-            sx={{ opacity: profileVisible ? 1 : 0, transform: profileVisible ? 'translateY(0)' : 'translateY(24px)',
-                  transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+            sx={{
+              opacity:   profileVisible ? 1 : 0,
+              transform: profileVisible ? 'translate3d(0, 0, 0)' : 'translate3d(-44px, 8px, 0)',
+              transition: 'opacity 0.7s ease, transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              willChange: 'transform',
+            }}>
             <Box sx={{
               width: '100%', maxWidth: { xs: 140, md: '100%' }, mx: { xs: 'auto', md: 0 },
               aspectRatio: '1/1', borderRadius: 2.5, overflow: 'hidden', mb: 2,
@@ -295,9 +299,13 @@ export default memo(function AboutSection() {
 
           {/* 스토리 콘텐츠 */}
           <Box ref={storyRef}
-            sx={{ opacity: storyVisible ? 1 : 0, transform: storyVisible ? 'translateY(0)' : 'translateY(24px)',
-                  transition: 'opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s',
-                  display: 'flex', flexDirection: 'column', gap: 3.5 }}>
+            sx={{
+              opacity:   storyVisible ? 1 : 0,
+              transform: storyVisible ? 'translate3d(0, 0, 0)' : 'translate3d(44px, 8px, 0)',
+              transition: 'opacity 0.7s ease 0.15s, transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s',
+              willChange: 'transform',
+              display: 'flex', flexDirection: 'column', gap: 3.5,
+            }}>
             {content.map((item, i) => (
               <Box key={item.id}
                 sx={{ opacity: storyVisible ? 1 : 0, transform: storyVisible ? 'translateY(0)' : 'translateY(16px)',
@@ -327,9 +335,13 @@ export default memo(function AboutSection() {
 
         {/* 주요 스킬 */}
         <Box ref={skillRef}
-          sx={{ mb: { xs: 6, md: 8 }, pt: 4, borderTop: `1px solid ${colors.border}`,
-                opacity: skillVisible ? 1 : 0, transform: skillVisible ? 'translateY(0)' : 'translateY(16px)',
-                transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+          sx={{
+            mb: { xs: 6, md: 8 }, pt: 4, borderTop: `1px solid ${colors.border}`,
+            opacity:   skillVisible ? 1 : 0,
+            transform: skillVisible ? 'translate3d(0, 0, 0) scale(1)' : 'translate3d(0, 20px, 0) scale(0.96)',
+            transition: 'opacity 0.65s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            willChange: 'transform',
+          }}>
           <Typography variant="overline"
             sx={{ color: colors.textMuted, letterSpacing: 4, fontSize: '0.65rem', display: 'block', mb: 2.5 }}>
             주요 기술

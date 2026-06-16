@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -37,8 +37,35 @@ const BG_DOTS = [
   { top: '48%', left:  '1%',  size: 3 },
 ];
 
+/* ── rAF 스로틀 스크롤 훅 (패럴렉스 공용) ── */
+function useScrollY() {
+  const [scrollY, setScrollY] = useState(0);
+  const rafRef = useRef(null);
+  useEffect(() => {
+    const onScroll = () => {
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+        rafRef.current = null;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+  return scrollY;
+}
+
 export default function HeroSection() {
   const [show, setShow] = useState(false);
+  const scrollY  = useScrollY();
+  /* 패럴렉스 오프셋 — 각 레이어 깊이에 따라 속도 분리 */
+  const bgY1     = scrollY * 0.18;   // 배경 링 1 (가장 뒤)
+  const bgY2     = scrollY * 0.11;   // 배경 링 2
+  const dotsY    = scrollY * 0.08;   // 배경 도트 (중간층)
+  const orbitY   = scrollY * -0.07;  // 오빗 비주얼 (앞으로 튀어나오는 효과)
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,48 +102,64 @@ export default function HeroSection() {
         `,
       }}
     >
-      {/* ── 배경 장식: 회전 링 ── */}
+      {/* ── 배경 장식: 회전 링 (레이어 1 — 가장 뒤, 느린 패럴렉스) ── */}
       <Box sx={{
         position: 'absolute', top: '-12%', right: '-8%',
-        width: { xs: 280, md: 520 }, height: { xs: 280, md: 520 },
-        borderRadius: '50%',
-        border: `1px solid ${colors.primary}20`,
+        transform: `translate3d(0, ${bgY1}px, 0)`,
+        willChange: 'transform',
         pointerEvents: 'none',
-        animation: 'ringSpinCW 50s linear infinite',
-        '@keyframes ringSpinCW': {
-          from: { transform: 'rotate(0deg)' },
-          to:   { transform: 'rotate(360deg)' },
-        },
-      }} />
+      }}>
+        <Box sx={{
+          width: { xs: 280, md: 520 }, height: { xs: 280, md: 520 },
+          borderRadius: '50%',
+          border: `1px solid ${colors.primary}20`,
+          animation: 'ringSpinCW 50s linear infinite',
+          '@keyframes ringSpinCW': {
+            from: { transform: 'rotate(0deg)' },
+            to:   { transform: 'rotate(360deg)' },
+          },
+        }} />
+      </Box>
+      {/* ── 배경 장식: 회전 링 (레이어 2 — 조금 더 앞) ── */}
       <Box sx={{
         position: 'absolute', bottom: '-10%', left: '-6%',
-        width: { xs: 200, md: 380 }, height: { xs: 200, md: 380 },
-        borderRadius: '50%',
-        border: `1px solid ${colors.accent}40`,
+        transform: `translate3d(0, ${bgY2}px, 0)`,
+        willChange: 'transform',
         pointerEvents: 'none',
-        animation: 'ringSpinCCW 38s linear infinite',
-        '@keyframes ringSpinCCW': {
-          from: { transform: 'rotate(0deg)' },
-          to:   { transform: 'rotate(-360deg)' },
-        },
-      }} />
+      }}>
+        <Box sx={{
+          width: { xs: 200, md: 380 }, height: { xs: 200, md: 380 },
+          borderRadius: '50%',
+          border: `1px solid ${colors.accent}40`,
+          animation: 'ringSpinCCW 38s linear infinite',
+          '@keyframes ringSpinCCW': {
+            from: { transform: 'rotate(0deg)' },
+            to:   { transform: 'rotate(-360deg)' },
+          },
+        }} />
+      </Box>
 
-      {/* ── 배경 장식: 떠다니는 도트 ── */}
+      {/* ── 배경 장식: 떠다니는 도트 (레이어 3 — 패럴렉스 + 부유 중첩) ── */}
       {BG_DOTS.map((d, i) => (
         <Box key={i} sx={{
           position: 'absolute',
           top: d.top, left: d.left, right: d.right,
-          width: d.size, height: d.size,
-          borderRadius: '50%',
-          backgroundColor: colors.primary,
-          opacity: 0.28,
+          transform: `translate3d(0, ${dotsY * (0.6 + i * 0.1)}px, 0)`,
+          willChange: 'transform',
           pointerEvents: 'none',
-          animation: `dotFloat${i} ${3.2 + i * 0.6}s ease-in-out infinite`,
-          [`@keyframes dotFloat${i}`]: {
-            '0%, 100%': { transform: 'translateY(0)',   opacity: 0.28 },
-            '50%':      { transform: 'translateY(-9px)', opacity: 0.55 },
-          },
-        }} />
+        }}>
+          <Box sx={{
+            width: d.size, height: d.size,
+            borderRadius: '50%',
+            backgroundColor: colors.primary,
+            opacity: 0.28,
+            animation: `dotFloat${i} ${3.2 + i * 0.6}s ease-in-out infinite`,
+            [`@keyframes dotFloat${i}`]: {
+              '0%, 100%': { transform: 'translateY(0)',    opacity: 0.28 },
+              '50%':      { transform: 'translateY(-9px)', opacity: 0.55 },
+            },
+          }} />
+        </Box>
       ))}
 
       <Container
@@ -445,15 +488,20 @@ export default function HeroSection() {
             </Box>
           </Box>
 
-          {/* ── 오른쪽: 기술 스택 오빗 비주얼 ── */}
+          {/* ── 오른쪽: 기술 스택 오빗 비주얼 (레이어 4 — 역방향 패럴렉스, 앞으로 나오는 효과) ── */}
           <Box sx={{
-            display:        { xs: 'none', md: 'flex' },
+            display: { xs: 'none', md: 'flex' },
             justifyContent: 'center',
-            alignItems:     'center',
-            opacity:    show ? 1 : 0,
-            transform:  show ? 'scale(1)' : 'scale(0.9)',
-            transition: 'opacity 0.8s ease 500ms, transform 0.8s ease 500ms',
+            alignItems: 'center',
+            transform: `translate3d(0, ${orbitY}px, 0)`,
+            willChange: 'transform',
           }}>
+            <Box sx={{
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              opacity:    show ? 1 : 0,
+              transform:  show ? 'scale(1)' : 'scale(0.9)',
+              transition: 'opacity 0.8s ease 500ms, transform 0.8s ease 500ms',
+            }}>
             <Box sx={{ position: 'relative', width: 380, height: 420 }}>
 
               {/* 점선 궤도 */}
@@ -562,6 +610,7 @@ export default function HeroSection() {
                   </Box>
                 );
               })}
+            </Box>
             </Box>
           </Box>
 
