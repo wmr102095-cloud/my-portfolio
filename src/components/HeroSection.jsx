@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -38,14 +39,21 @@ const BG_DOTS = [
 
 export default function HeroSection() {
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const t = setTimeout(() => setShow(true), 200);
     return () => clearTimeout(t);
   }, []);
 
-  const scrollTo = (id) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = useCallback((id) => {
+    if (location.pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/', { state: { scrollTo: id } });
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <Box
@@ -301,37 +309,35 @@ export default function HeroSection() {
                   연락하기
                 </Button>
 
-                {/* 이력서 다운로드 */}
-                <Button
-                  variant="text"
-                  size="large"
-                  component="a"
-                  href={`${import.meta.env.BASE_URL}resume.pdf`}
-                  download="김재우_이력서.pdf"
-                  startIcon={<DownloadIcon sx={{ fontSize: '1rem !important' }} />}
-                  sx={{
-                    color: colors.textMuted,
-                    px: { xs: 2.5, md: 3 },
-                    py: 1.5,
-                    minHeight: { xs: 48, sm: 44 },
-                    width: { xs: '100%', sm: 'auto' },
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    borderRadius: 2,
-                    letterSpacing: 0.5,
-                    border: `1px dashed ${colors.primary}40`,
-                    transition: 'all 0.22s ease',
-                    '&:hover': {
-                      color: colors.primaryDark,
-                      borderColor: colors.primary,
-                      backgroundColor: `${colors.primary}08`,
-                      transform: 'translateY(-2px)',
-                    },
-                    '&:active': { transform: 'translateY(0)' },
-                  }}
-                >
-                  이력서
-                </Button>
+                {/* 이력서 다운로드 — 파일 준비 시 활성화 */}
+                <Tooltip title="이력서 준비 중입니다" arrow placement="top">
+                  <span style={{ width: 'inherit' }}>
+                    <Button
+                      variant="text"
+                      size="large"
+                      disabled
+                      startIcon={<DownloadIcon sx={{ fontSize: '1rem !important' }} />}
+                      sx={{
+                        color: `${colors.textMuted}80`,
+                        px: { xs: 2.5, md: 3 },
+                        py: 1.5,
+                        minHeight: { xs: 48, sm: 44 },
+                        width: { xs: '100%', sm: 'auto' },
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        borderRadius: 2,
+                        letterSpacing: 0.5,
+                        border: `1px dashed ${colors.primary}25`,
+                        '&.Mui-disabled': {
+                          color: `${colors.textMuted}70`,
+                          border: `1px dashed ${colors.primary}25`,
+                        },
+                      }}
+                    >
+                      이력서
+                    </Button>
+                  </span>
+                </Tooltip>
               </Box>
 
               {/* 소셜 아이콘 행 */}
