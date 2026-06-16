@@ -269,13 +269,14 @@ export default function HeroSection() {
                     borderRadius: 2,
                     letterSpacing: 0.5,
                     boxShadow: `0 4px 20px ${colors.primaryDark}35`,
-                    transition: 'all 0.22s ease',
+                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease',
+                    willChange: 'transform',
                     '&:hover': {
                       backgroundColor: colors.primary,
-                      boxShadow: `0 8px 28px ${colors.primaryDark}45`,
-                      transform: 'translateY(-2px)',
+                      boxShadow: `0 14px 36px ${colors.primaryDark}45`,
+                      transform: 'translateY(-3px) scale(1.02)',
                     },
-                    '&:active': { transform: 'translateY(0)' },
+                    '&:active': { transform: 'translateY(0) scale(0.99)' },
                   }}
                 >
                   프로젝트 보기
@@ -297,13 +298,15 @@ export default function HeroSection() {
                     fontWeight: 600,
                     borderRadius: 2,
                     letterSpacing: 0.5,
-                    transition: 'all 0.22s ease',
+                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s, background-color 0.22s',
+                    willChange: 'transform',
                     '&:hover': {
                       borderColor: colors.primaryDark,
                       backgroundColor: `${colors.primary}12`,
-                      transform: 'translateY(-2px)',
+                      boxShadow: `0 10px 28px ${colors.primaryDark}22`,
+                      transform: 'translateY(-3px) scale(1.02)',
                     },
-                    '&:active': { transform: 'translateY(0)' },
+                    '&:active': { transform: 'translateY(0) scale(0.99)' },
                   }}
                 >
                   연락하기
@@ -354,12 +357,14 @@ export default function HeroSection() {
                       width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
-                      transition: 'all 0.2s ease',
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
+                      willChange: 'transform',
                       '&:hover': {
                         color: colors.textPrimary,
                         borderColor: colors.textPrimary,
                         backgroundColor: `${colors.primaryDark}10`,
-                        transform: 'translateY(-2px)',
+                        transform: 'translateY(-4px)',
+                        boxShadow: `0 8px 20px ${colors.primaryDark}18`,
                       },
                     }}
                   >
@@ -379,12 +384,14 @@ export default function HeroSection() {
                       width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
-                      transition: 'all 0.2s ease',
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
+                      willChange: 'transform',
                       '&:hover': {
                         color: '#0077B5',
                         borderColor: '#0077B5',
                         backgroundColor: '#0077B510',
-                        transform: 'translateY(-2px)',
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 8px 20px #0077B520',
                       },
                     }}
                   >
@@ -402,12 +409,14 @@ export default function HeroSection() {
                       width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
-                      transition: 'all 0.2s ease',
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
+                      willChange: 'transform',
                       '&:hover': {
                         color: colors.primary,
                         borderColor: colors.primary,
                         backgroundColor: `${colors.primary}10`,
-                        transform: 'translateY(-2px)',
+                        transform: 'translateY(-4px)',
+                        boxShadow: `0 8px 20px ${colors.primary}25`,
                       },
                     }}
                   >
@@ -530,11 +539,12 @@ export default function HeroSection() {
                       alignItems: 'center',
                       gap: 0.25,
                       minWidth: 66,
-                      transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
+                      transition: 'border-color 0.22s, box-shadow 0.25s, transform 0.25s',
+                      willChange: 'transform',
                       '&:hover': {
                         borderColor: colors.primary,
-                        boxShadow: `0 8px 24px ${colors.primaryDark}20`,
-                        transform: 'scale(1.1)',
+                        boxShadow: `0 10px 28px ${colors.primaryDark}28, 0 0 0 4px ${colors.primary}14`,
+                        transform: 'scale(1.14) translateY(-4px)',
                       },
                       cursor: 'default',
                     }}>

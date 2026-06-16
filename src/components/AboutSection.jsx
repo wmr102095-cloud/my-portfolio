@@ -126,8 +126,16 @@ export default memo(function AboutSection() {
               width: '100%', maxWidth: { xs: 140, md: '100%' }, mx: { xs: 'auto', md: 0 },
               aspectRatio: '1/1', borderRadius: 2.5, overflow: 'hidden', mb: 2,
               border: `1px solid ${colors.border}`, backgroundColor: `${colors.primary}10`,
-              transition: 'border-color 0.4s',
+              transition: 'border-color 0.4s, box-shadow 0.35s',
               borderColor: isSyncing ? `${colors.primary}60` : colors.border,
+              '&:hover': {
+                borderColor: `${colors.primary}70`,
+                boxShadow: `0 8px 32px ${colors.primary}28`,
+              },
+              '&:hover img': {
+                transform: 'scale(1.07)',
+                filter: 'brightness(1.06)',
+              },
             }}>
               {basicInfo.photo
                 ? <Box
@@ -136,7 +144,11 @@ export default memo(function AboutSection() {
                     alt={`${basicInfo.name} 프로필 사진`}
                     loading="lazy"
                     decoding="async"
-                    sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    sx={{
+                      width: '100%', height: '100%', objectFit: 'cover',
+                      transition: 'transform 0.45s ease, filter 0.45s ease',
+                      willChange: 'transform',
+                    }}
                   />
                 : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center',
                               justifyContent: 'center', color: colors.textMuted, fontSize: '2rem' }}
@@ -218,9 +230,15 @@ export default memo(function AboutSection() {
                     <Box sx={{
                       width: 52, height: 52, borderRadius: 2, border: `1px solid ${color}30`,
                       backgroundColor: `${color}10`, display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: '1.5rem', transition: 'all 0.2s',
-                      '&:hover': { backgroundColor: `${color}20`, borderColor: `${color}60`,
-                                   transform: 'translateY(-2px)' },
+                      justifyContent: 'center', fontSize: '1.5rem',
+                      transition: 'transform 0.25s ease, background-color 0.25s, border-color 0.25s, box-shadow 0.25s',
+                      willChange: 'transform',
+                      '&:hover': {
+                        backgroundColor: `${color}22`,
+                        borderColor: `${color}80`,
+                        transform: 'translateY(-5px) scale(1.1)',
+                        boxShadow: `0 0 18px ${color}35, 0 8px 20px ${color}18`,
+                      },
                     }} aria-hidden="true">
                       {skill.icon}
                     </Box>

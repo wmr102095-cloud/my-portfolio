@@ -61,15 +61,18 @@ function ProjectCard({ title, desc, tech, live, icon, gradient, delay }) {
       sx={{
         opacity:    visible ? 1 : 0,
         transform:  visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
+        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms, border-color 0.25s, box-shadow 0.3s`,
         border:     `1px solid ${colors.border}`,
         borderRadius: 3,
         overflow:   'hidden',
         backgroundColor: colors.bgPrimary,
         cursor:     'pointer',
+        willChange: 'transform',
         '&:hover': {
           borderColor: colors.primary,
-          boxShadow:   `0 8px 32px ${colors.primaryDark}18`,
+          boxShadow:   `0 20px 56px ${colors.primaryDark}22`,
+          transform:   'translateY(-10px)',
+          transition:  'transform 0.3s ease, border-color 0.25s, box-shadow 0.3s',
         },
         display:        'flex',
         flexDirection:  'column',
@@ -86,11 +89,18 @@ function ProjectCard({ title, desc, tech, live, icon, gradient, delay }) {
           justifyContent: 'center',
           position:   'relative',
           overflow:   'hidden',
-          transition: 'transform 0.4s ease',
-          transform:  hovered ? 'scale(1.03)' : 'scale(1)',
+          transition: 'transform 0.45s ease',
+          transform:  hovered ? 'scale(1.06)' : 'scale(1)',
         }}
       >
-        <Typography sx={{ fontSize: '3rem', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}>
+        <Typography sx={{
+          fontSize: '3rem',
+          filter: hovered
+            ? 'drop-shadow(0 4px 16px rgba(0,0,0,0.5))'
+            : 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))',
+          transform: hovered ? 'scale(1.15)' : 'scale(1)',
+          transition: 'transform 0.4s ease, filter 0.4s ease',
+        }}>
           {icon}
         </Typography>
         {/* 방문 오버레이 */}
@@ -98,17 +108,20 @@ function ProjectCard({ title, desc, tech, live, icon, gradient, delay }) {
           sx={{
             position:   'absolute',
             inset:      0,
-            backgroundColor: 'rgba(0,0,0,0.35)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%)',
             display:    'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            gap: 0.5,
             opacity:    hovered ? 1 : 0,
             transition: 'opacity 0.3s ease',
           }}
         >
-          <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600, letterSpacing: 2 }}>
-            VISIT SITE ↗
+          <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 700, letterSpacing: 3 }}>
+            VISIT SITE
           </Typography>
+          <Typography sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem' }}>↗</Typography>
         </Box>
       </Box>
 
