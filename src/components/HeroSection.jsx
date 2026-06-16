@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import { colors } from '../theme/theme';
 
 const LINES = [
@@ -59,7 +60,7 @@ export default function HeroSection() {
             transition: 'opacity 0.6s ease 0ms, transform 0.6s ease 0ms',
           }}
         >
-          Product Designer
+          Frontend Developer & UI Designer
         </Typography>
 
         {/* 헤드라인 */}
@@ -146,8 +147,9 @@ export default function HeroSection() {
             transition: 'opacity 0.6s ease 1350ms, transform 0.6s ease 1350ms',
           }}
         >
-          건축과 인테리어에서 시작해 웹으로 온,<br />
-          디자인하고 직접 만드는 사람입니다.
+          React · Supabase · MUI로 아름답고 작동하는 웹앱을<br />
+          직접 설계하고 배포합니다. 건축 공간 설계에서 시작한<br />
+          디자인 감각을 화면 위에서 이어가고 있습니다.
         </Typography>
 
         {/* CTA 버튼 */}
@@ -203,6 +205,30 @@ export default function HeroSection() {
             }}
           >
             연락하기
+          </Button>
+          <Button
+            variant="text"
+            size="large"
+            component="a"
+            href="https://github.com/wmr102095-cloud"
+            target="_blank"
+            rel="noopener noreferrer"
+            startIcon={<GitHubIcon sx={{ fontSize: '1.1rem !important' }} />}
+            sx={{
+              color: colors.textMuted,
+              px: { xs: 2.5, md: 3 },
+              py: 1.5,
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              borderRadius: 2,
+              letterSpacing: 0.5,
+              '&:hover': {
+                color: colors.textPrimary,
+                backgroundColor: `${colors.primaryDark}10`,
+              },
+            }}
+          >
+            GitHub
           </Button>
         </Box>
       </Container>
