@@ -7,7 +7,6 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
-import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import EmailIcon from '@mui/icons-material/Email';
@@ -23,6 +22,34 @@ const sectionBase = {
   py: { xs: 8, md: 12 },
   px: { xs: 2, md: 4 },
 };
+
+function SkeletonCard() {
+  const shimmer = {
+    background: `linear-gradient(90deg, ${colors.border} 25%, ${colors.bgPrimary}90 50%, ${colors.border} 75%)`,
+    backgroundSize: '400% 100%',
+    borderRadius: '6px',
+    '@keyframes shimmer': {
+      '0%': { backgroundPosition: '100% 0' },
+      '100%': { backgroundPosition: '-100% 0' },
+    },
+    animation: 'shimmer 1.4s ease-in-out infinite',
+  };
+  return (
+    <Box sx={{
+      p: { xs: 2.5, md: 3 },
+      border: `1px solid ${colors.border}`,
+      borderRadius: '12px',
+      backgroundColor: colors.bgSecondary,
+    }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+        <Box sx={{ ...shimmer, height: '14px', width: '38%' }} />
+        <Box sx={{ ...shimmer, height: '14px', width: '18%', animationDelay: '0.1s' }} />
+      </Box>
+      <Box sx={{ ...shimmer, height: '12px', width: '90%', mb: 0.9, animationDelay: '0.05s' }} />
+      <Box sx={{ ...shimmer, height: '12px', width: '65%', animationDelay: '0.15s' }} />
+    </Box>
+  );
+}
 
 export default function ContactSection() {
   const [entries, setEntries] = useState([]);
@@ -332,8 +359,10 @@ export default function ContactSection() {
           </Typography>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-              <CircularProgress size={32} sx={{ color: colors.primary }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
             </Box>
           ) : entries.length === 0 ? (
             <Card>

@@ -23,6 +23,24 @@ function useFadeIn(threshold = 0.1) {
   return [ref, visible];
 }
 
+/* ── rAF 카운트업 훅 ── */
+function useCountUp(target, duration = 900, active = false) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef(null);
+  useEffect(() => {
+    if (!active) { setValue(0); return; }
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      setValue(Math.round((1 - Math.pow(1 - t, 3)) * target));
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, active]);
+  return value;
+}
+
 const CATEGORY_META = {
   Frontend:  { color: '#9f8473', bg: '#9f847320' },
   Framework: { color: '#5c7a9f', bg: '#5c7a9f20' },
@@ -34,11 +52,12 @@ const CATEGORY_META = {
 /* ── 스킬 카드 (홈용) ── */
 const HomeSkillCard = memo(function HomeSkillCard({ skill, visible, index }) {
   const meta = CATEGORY_META[skill.category] ?? CATEGORY_META.Tools;
+  const displayLevel = useCountUp(skill.level, 900, visible);
 
   return (
     <Box
       role="article"
-      aria-label={`${skill.name} ${skill.level}%`}
+      aria-label={`${skill.name} ${displayLevel}%`}
       sx={{
         opacity:    visible ? 1 : 0,
         transform:  visible ? 'translateY(0)' : 'translateY(28px)',
@@ -75,7 +94,7 @@ const HomeSkillCard = memo(function HomeSkillCard({ skill, visible, index }) {
           </Box>
         </Box>
         <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: meta.color }} aria-hidden="true">
-          {skill.level}%
+          {displayLevel}%
         </Typography>
       </Box>
 

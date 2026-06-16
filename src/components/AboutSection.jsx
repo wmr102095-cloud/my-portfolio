@@ -24,6 +24,24 @@ function useFadeIn(threshold = 0.12) {
   return [ref, visible];
 }
 
+/* ── rAF 카운트업 훅 ── */
+function useCountUp(target, duration = 1100, active = false) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef(null);
+  useEffect(() => {
+    if (!active) { setValue(0); return; }
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      setValue(Math.round((1 - Math.pow(1 - t, 3)) * target));
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, active]);
+  return value;
+}
+
 const CATEGORY_COLOR = {
   Frontend:  '#9f8473',
   Framework: '#5c7a9f',
@@ -31,6 +49,12 @@ const CATEGORY_COLOR = {
   Backend:   '#5f8c6e',
   Tools:     '#72706a',
 };
+
+const STATS = [
+  { value: 3, label: '직접 만든 프로젝트', suffix: '개' },
+  { value: 5, label: '주요 기술 스택',     suffix: '+' },
+  { value: 6, label: '개발 경력',          suffix: '개월' },
+];
 
 /* ── 기본 정보 행 ── */
 const MiniInfoRow = memo(function MiniInfoRow({ label, value }) {
@@ -71,6 +95,103 @@ function SyncDot({ active }) {
   );
 }
 
+/* ── 원형 SVG 스킬 뱃지 ── */
+function CircleSkillIcon({ skill, color, visible, index }) {
+  const SIZE = 68;
+  const STROKE = 3.5;
+  const r = (SIZE - STROKE) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = visible ? circ - (skill.level / 100) * circ : circ;
+
+  return (
+    <Tooltip
+      title={`${skill.name} · ${skill.level}%`} arrow
+      componentsProps={{ tooltip: { sx: { backgroundColor: colors.primaryDark, fontSize: '0.75rem' } } }}>
+      <Box
+        role="listitem"
+        sx={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
+          opacity:   visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(14px)',
+          transition: `opacity 0.5s ease ${index * 80}ms, transform 0.5s ease ${index * 80}ms`,
+          cursor: 'default',
+        }}>
+        <Box sx={{
+          position: 'relative', width: SIZE, height: SIZE,
+          transition: 'transform 0.25s ease, filter 0.25s ease',
+          willChange: 'transform',
+          '&:hover': {
+            transform: 'translateY(-5px) scale(1.1)',
+            filter: `drop-shadow(0 4px 12px ${color}60)`,
+          },
+        }}>
+          <svg
+            width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}
+            style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }}
+            aria-hidden="true">
+            <circle cx={SIZE / 2} cy={SIZE / 2} r={r}
+              fill="none" stroke={`${color}20`} strokeWidth={STROKE} />
+            <circle cx={SIZE / 2} cy={SIZE / 2} r={r}
+              fill="none" stroke={color} strokeWidth={STROKE}
+              strokeDasharray={circ}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              style={{ transition: `stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1) ${index * 80}ms` }} />
+          </svg>
+          <Box sx={{
+            position: 'absolute', inset: 0,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: 0.2,
+          }}>
+            <Typography sx={{ fontSize: '1.4rem', lineHeight: 1 }} aria-hidden="true">
+              {skill.icon}
+            </Typography>
+            <Typography sx={{ fontSize: '0.5rem', fontWeight: 700, color, lineHeight: 1.2 }}>
+              {skill.level}%
+            </Typography>
+          </Box>
+        </Box>
+        <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: colors.textMuted }}>
+          {skill.name}
+        </Typography>
+      </Box>
+    </Tooltip>
+  );
+}
+
+/* ── 통계 숫자 카운터 ── */
+function StatItem({ stat, visible, index }) {
+  const count = useCountUp(stat.value, 1200, visible);
+  return (
+    <Box sx={{
+      textAlign: 'center',
+      opacity:   visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(16px)',
+      transition: `opacity 0.6s ease ${index * 150}ms, transform 0.6s ease ${index * 150}ms`,
+    }}>
+      <Typography sx={{
+        fontFamily: '"Playfair Display", Georgia, serif',
+        fontSize:  { xs: '2rem', md: '2.6rem' },
+        fontWeight: 700,
+        color: colors.textPrimary,
+        lineHeight: 1,
+        letterSpacing: -0.5,
+      }}>
+        {count}
+        <Box component="span" sx={{ fontSize: '1rem', color: colors.primary, ml: 0.3 }}>
+          {stat.suffix}
+        </Box>
+      </Typography>
+      <Typography sx={{
+        fontSize: '0.72rem', color: colors.textMuted,
+        mt: 0.8, letterSpacing: 0.5, fontWeight: 500,
+      }}>
+        {stat.label}
+      </Typography>
+    </Box>
+  );
+}
+
 /* ── About Me 섹션 (홈) ── */
 export default memo(function AboutSection() {
   const navigate = useNavigate();
@@ -80,6 +201,7 @@ export default memo(function AboutSection() {
   const [profileRef, profileVisible] = useFadeIn(0.1);
   const [storyRef,   storyVisible]   = useFadeIn(0.1);
   const [skillRef,   skillVisible]   = useFadeIn(0.1);
+  const [statsRef,   statsVisible]   = useFadeIn(0.15);
   const [ctaRef,     ctaVisible]     = useFadeIn(0.1);
 
   const { content, skills, basicInfo } = homeData;
@@ -212,44 +334,34 @@ export default memo(function AboutSection() {
             sx={{ color: colors.textMuted, letterSpacing: 4, fontSize: '0.65rem', display: 'block', mb: 2.5 }}>
             주요 기술
           </Typography>
-          <Box sx={{ display: 'flex', gap: { xs: 2, md: 3 }, flexWrap: 'wrap' }} role="list">
+          <Box sx={{ display: 'flex', gap: { xs: 2.5, md: 3.5 }, flexWrap: 'wrap' }} role="list">
             {skills.map((skill, i) => {
               const color = CATEGORY_COLOR[skill.category] ?? colors.primary;
               return (
-                <Tooltip
+                <CircleSkillIcon
                   key={skill.id}
-                  title={`${skill.name} · ${skill.level}%`} arrow
-                  componentsProps={{ tooltip: { sx: { backgroundColor: colors.primaryDark, fontSize: '0.75rem' } } }}>
-                  <Box
-                    role="listitem"
-                    sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
-                          opacity: skillVisible ? 1 : 0,
-                          transform: skillVisible ? 'translateY(0)' : 'translateY(12px)',
-                          transition: `opacity 0.5s ease ${i * 80}ms, transform 0.5s ease ${i * 80}ms`,
-                          cursor: 'default' }}>
-                    <Box sx={{
-                      width: 52, height: 52, borderRadius: 2, border: `1px solid ${color}30`,
-                      backgroundColor: `${color}10`, display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: '1.5rem',
-                      transition: 'transform 0.25s ease, background-color 0.25s, border-color 0.25s, box-shadow 0.25s',
-                      willChange: 'transform',
-                      '&:hover': {
-                        backgroundColor: `${color}22`,
-                        borderColor: `${color}80`,
-                        transform: 'translateY(-5px) scale(1.1)',
-                        boxShadow: `0 0 18px ${color}35, 0 8px 20px ${color}18`,
-                      },
-                    }} aria-hidden="true">
-                      {skill.icon}
-                    </Box>
-                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 600, color: colors.textMuted }}>
-                      {skill.name}
-                    </Typography>
-                  </Box>
-                </Tooltip>
+                  skill={skill}
+                  color={color}
+                  visible={skillVisible}
+                  index={i}
+                />
               );
             })}
           </Box>
+        </Box>
+
+        {/* 통계 카운터 */}
+        <Box ref={statsRef}
+          sx={{
+            display: 'flex', justifyContent: 'center', gap: { xs: 5, md: 8 },
+            py: { xs: 4, md: 5 },
+            borderTop: `1px solid ${colors.border}`,
+            borderBottom: `1px solid ${colors.border}`,
+            mb: { xs: 6, md: 8 },
+          }}>
+          {STATS.map((stat, i) => (
+            <StatItem key={stat.label} stat={stat} visible={statsVisible} index={i} />
+          ))}
         </Box>
 
         {/* CTA */}
