@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import theme from './theme/theme';
 import { PortfolioProvider } from './context/PortfolioContext';
 import NavBar from './components/NavBar';
+import CustomCursor from './components/CustomCursor';
 import Home from './pages/Home';
 import AboutMe from './pages/AboutMe';
 import Projects from './pages/Projects';
@@ -12,6 +13,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <CustomCursor />
       <PortfolioProvider>
       <HashRouter>
         <NavBar />
