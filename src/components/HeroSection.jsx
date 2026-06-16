@@ -113,12 +113,12 @@ export default function HeroSection() {
 
       <Container
         maxWidth="lg"
-        sx={{ px: { xs: 3, md: 4 }, py: { xs: 14, md: 0 } }}
+        sx={{ px: { xs: 2.5, sm: 3, md: 4 }, py: { xs: 13, sm: 12, md: 0 } }}
       >
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', md: '54% 46%' },
-          gap: { xs: 6, md: 4 },
+          gap: { xs: 4, sm: 5, md: 4 },
           alignItems: 'center',
           minHeight: { md: '100vh' },
         }}>
@@ -130,8 +130,8 @@ export default function HeroSection() {
               variant="overline"
               sx={{
                 color: colors.primary,
-                letterSpacing: 5,
-                fontSize: '0.7rem',
+                letterSpacing: { xs: 3, sm: 5 },
+                fontSize: { xs: '0.62rem', sm: '0.7rem' },
                 fontWeight: 600,
                 mb: 3,
                 display: 'block',
@@ -216,18 +216,16 @@ export default function HeroSection() {
               variant="body1"
               sx={{
                 color:    colors.textMuted,
-                fontSize: { xs: '0.9rem', md: '1rem' },
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
                 lineHeight: 1.9,
                 maxWidth: 420,
-                mb:       { xs: 5, md: 6 },
+                mb:       { xs: 4, sm: 5, md: 6 },
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(12px)',
                 transition: 'opacity 0.6s ease 1350ms, transform 0.6s ease 1350ms',
               }}
             >
-              React · Supabase · MUI로 아름답고 작동하는 웹앱을<br />
-              직접 설계하고 배포합니다. 건축 공간 설계에서 시작한<br />
-              디자인 감각을 화면 위에서 이어가고 있습니다.
+              React · Supabase · MUI로 아름답고 작동하는 웹앱을 직접 설계하고 배포합니다. 건축 공간 설계에서 시작한 디자인 감각을 화면 위에서 이어가고 있습니다.
             </Typography>
 
             {/* ── CTA 버튼 영역 ── */}
@@ -238,7 +236,13 @@ export default function HeroSection() {
             }}>
 
               {/* 주요 버튼 행 */}
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2.5 }}>
+              <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 1.5, sm: 2 },
+                flexWrap: { sm: 'wrap' },
+                mb: 2.5,
+              }}>
 
                 {/* Primary CTA */}
                 <Button
@@ -250,6 +254,8 @@ export default function HeroSection() {
                     color: '#f5ede3',
                     px: { xs: 3.5, md: 4.5 },
                     py: 1.5,
+                    minHeight: { xs: 48, sm: 44 },
+                    width: { xs: '100%', sm: 'auto' },
                     fontSize: '0.9rem',
                     fontWeight: 600,
                     borderRadius: 2,
@@ -277,6 +283,8 @@ export default function HeroSection() {
                     color: colors.primaryDark,
                     px: { xs: 3.5, md: 4.5 },
                     py: 1.5,
+                    minHeight: { xs: 48, sm: 44 },
+                    width: { xs: '100%', sm: 'auto' },
                     fontSize: '0.9rem',
                     fontWeight: 600,
                     borderRadius: 2,
@@ -305,6 +313,8 @@ export default function HeroSection() {
                     color: colors.textMuted,
                     px: { xs: 2.5, md: 3 },
                     py: 1.5,
+                    minHeight: { xs: 48, sm: 44 },
+                    width: { xs: '100%', sm: 'auto' },
                     fontSize: '0.9rem',
                     fontWeight: 600,
                     borderRadius: 2,
@@ -325,7 +335,7 @@ export default function HeroSection() {
               </Box>
 
               {/* 소셜 아이콘 행 */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.75, sm: 0.5 }, flexWrap: 'wrap' }}>
                 <Tooltip title="GitHub 보기" arrow placement="top">
                   <IconButton
                     component="a"
@@ -335,7 +345,7 @@ export default function HeroSection() {
                     aria-label="GitHub 프로필"
                     sx={{
                       color: colors.textMuted,
-                      width: 40, height: 40,
+                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
                       transition: 'all 0.2s ease',
@@ -360,7 +370,7 @@ export default function HeroSection() {
                     aria-label="LinkedIn 프로필"
                     sx={{
                       color: colors.textMuted,
-                      width: 40, height: 40,
+                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
                       transition: 'all 0.2s ease',
@@ -383,7 +393,7 @@ export default function HeroSection() {
                     aria-label="이메일 보내기"
                     sx={{
                       color: colors.textMuted,
-                      width: 40, height: 40,
+                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
                       transition: 'all 0.2s ease',
@@ -402,12 +412,17 @@ export default function HeroSection() {
                 <Divider
                   orientation="vertical"
                   flexItem
-                  sx={{ borderColor: colors.border, mx: 1, my: 0.5 }}
+                  sx={{ borderColor: colors.border, mx: 1, my: 0.5, display: { xs: 'none', sm: 'flex' } }}
                 />
 
                 <Typography
                   variant="caption"
-                  sx={{ color: colors.textMuted, fontSize: '0.75rem', letterSpacing: 0.3 }}
+                  sx={{
+                    color: colors.textMuted,
+                    fontSize: '0.75rem',
+                    letterSpacing: 0.3,
+                    display: { xs: 'none', sm: 'block' },
+                  }}
                 >
                   wmr102095@gmail.com
                 </Typography>
