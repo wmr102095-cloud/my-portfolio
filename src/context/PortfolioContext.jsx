@@ -59,7 +59,10 @@ export function PortfolioProvider({ children }) {
         title:   s.title,
         summary: s.content.length > 120 ? s.content.substring(0, 120) + '…' : s.content,
       })),
-    skills:    [...data.skills].sort((a, b) => b.level - a.level).slice(0, 4),
+    skills: [...data.skills]
+      .filter(s => s.showInMain)
+      .sort((a, b) => b.level - a.level)
+      .slice(0, 4),
     basicInfo: data.basicInfo,
   }), [data]);
 

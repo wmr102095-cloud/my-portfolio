@@ -42,7 +42,7 @@ const HomeSkillCard = memo(function HomeSkillCard({ skill, visible, index }) {
       sx={{
         opacity:    visible ? 1 : 0,
         transform:  visible ? 'translateY(0)' : 'translateY(28px)',
-        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms`,
+        transition: `opacity 0.6s ease ${index * 120}ms, transform 0.6s ease ${index * 120}ms, border-color 0.2s`,
         p: { xs: 2.5, md: 3 },
         border: `1px solid ${colors.border}`,
         borderRadius: 3,
@@ -50,8 +50,7 @@ const HomeSkillCard = memo(function HomeSkillCard({ skill, visible, index }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        transition2: undefined,
-        '&:hover': { borderColor: meta.color, transition: 'border-color 0.2s' },
+        '&:hover': { borderColor: meta.color },
       }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

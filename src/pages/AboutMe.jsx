@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo, useCallback } from 'react';
+import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -561,16 +561,25 @@ const AddSkillDialog = memo(function AddSkillDialog({ open, onClose, onAdd, exis
 });
 
 /* ── 스킬 섹션 ── */
-function SkillsSection({ skills, onAdd, onLevelChange }) {
+const SkillsSection = memo(function SkillsSection({ skills, onAdd, onLevelChange }) {
   const [sectionRef, sectionVisible] = useFadeIn(0.08);
   const [activeCategory, setActiveCategory] = useState('전체');
   const [sortByLevel, setSortByLevel]       = useState(true);
   const [addOpen, setAddOpen]               = useState(false);
 
-  const categories = ['전체', ...Object.keys(CATEGORY_META).filter(c => skills.some(s => s.category === c))];
-  const filtered   = activeCategory === '전체' ? skills : skills.filter(s => s.category === activeCategory);
-  const sorted     = sortByLevel ? [...filtered].sort((a, b) => b.level - a.level) : filtered;
-  const existingNames = skills.map(s => s.name);
+  const categories    = useMemo(
+    () => ['전체', ...Object.keys(CATEGORY_META).filter(c => skills.some(s => s.category === c))],
+    [skills],
+  );
+  const filtered      = useMemo(
+    () => activeCategory === '전체' ? skills : skills.filter(s => s.category === activeCategory),
+    [skills, activeCategory],
+  );
+  const sorted        = useMemo(
+    () => sortByLevel ? [...filtered].sort((a, b) => b.level - a.level) : filtered,
+    [filtered, sortByLevel],
+  );
+  const existingNames = useMemo(() => skills.map(s => s.name), [skills]);
 
   return (
     <>
@@ -674,7 +683,7 @@ function SkillsSection({ skills, onAdd, onLevelChange }) {
       <AddSkillDialog open={addOpen} onClose={() => setAddOpen(false)} onAdd={onAdd} existingNames={existingNames} />
     </>
   );
-}
+});
 
 /* ── About Me 페이지 ── */
 export default function AboutMe() {
