@@ -11,6 +11,9 @@ import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import EmailIcon from '@mui/icons-material/Email';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { colors } from '../theme/theme';
 
@@ -606,59 +609,134 @@ export default function HeroSection() {
               transform:  show ? 'translateY(0)' : 'translateY(12px)',
               transition: 'opacity 0.6s ease 1500ms, transform 0.6s ease 1500ms',
             }}>
+              {/* 주요 버튼 행 */}
               <Box sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
                 gap: { xs: 1.5, sm: 2 },
-                flexWrap: { sm: 'wrap' },
-                mb: { xs: 2.5, sm: 3 },
+                alignItems: { xs: 'stretch', sm: 'center' },
+                mb: { xs: 1.5, sm: 2 },
               }}>
-                <Button
-                  variant="contained" size="large"
-                  onClick={() => scrollTo('projects')}
-                  aria-label="프로젝트 섹션으로 이동"
-                  sx={{
-                    backgroundColor: colors.primaryDark, color: '#f5ede3',
-                    px: { xs: 3, sm: 3.5, md: 4.5 }, py: 1.5,
-                    minHeight: { xs: 52, sm: 48 },
-                    width: { xs: '100%', sm: 'auto' },
-                    fontSize: '0.9rem', fontWeight: 600, borderRadius: 2, letterSpacing: 0.5,
-                    boxShadow: `0 4px 20px ${colors.primaryDark}35`,
-                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease',
-                    willChange: 'transform',
-                    '&:hover': {
-                      backgroundColor: colors.primary,
-                      boxShadow: `0 14px 36px ${colors.primaryDark}45`,
-                      transform: 'translateY(-3px) scale(1.02)',
-                    },
-                    '&:active': { transform: 'translateY(0) scale(0.99)' },
-                  }}
-                >
-                  프로젝트 보기
-                </Button>
+                {/* ─ Primary CTA: 프로젝트 보기 ─ */}
+                <Box sx={{ position: 'relative', overflow: 'hidden',
+                           borderRadius: 2, width: { xs: '100%', sm: 'auto' },
+                           /* glow 펄스 */
+                           '&::before': {
+                             content: '""',
+                             position: 'absolute', inset: 0,
+                             borderRadius: 'inherit',
+                             background: `radial-gradient(circle at 50% 50%, ${colors.accent}60 0%, transparent 70%)`,
+                             opacity: 0,
+                             animation: 'btnGlow 2.8s ease-in-out infinite',
+                             pointerEvents: 'none', zIndex: 0,
+                             '@keyframes btnGlow': {
+                               '0%, 100%': { opacity: 0, transform: 'scale(0.8)' },
+                               '50%':      { opacity: 1, transform: 'scale(1.15)' },
+                             },
+                           },
+                }}>
+                  <Button
+                    variant="contained" size="large"
+                    onClick={() => scrollTo('projects')}
+                    aria-label="프로젝트 섹션으로 이동"
+                    endIcon={<ArrowForwardIcon sx={{
+                      transition: 'transform 0.25s ease',
+                      fontSize: '1.1rem !important',
+                    }} />}
+                    sx={{
+                      position: 'relative', zIndex: 1, overflow: 'hidden',
+                      /* 그라디언트 배경 */
+                      background: `linear-gradient(135deg, ${colors.primaryDark} 0%, ${colors.primary} 60%, ${colors.accent} 120%)`,
+                      backgroundSize: '200% 100%',
+                      backgroundPosition: '0% 50%',
+                      color: '#f5ede3',
+                      px: { xs: 3.5, sm: 4, md: 5 }, py: { xs: 1.7, sm: 1.5 },
+                      minHeight: { xs: 54, sm: 50 },
+                      width: { xs: '100%', sm: 'auto' },
+                      fontSize: { xs: '0.92rem', sm: '0.95rem' },
+                      fontWeight: 700, borderRadius: 2, letterSpacing: 0.6,
+                      boxShadow: `0 6px 24px ${colors.primaryDark}40`,
+                      transition: 'background-position 0.4s ease, transform 0.22s ease, box-shadow 0.22s ease',
+                      willChange: 'transform',
+                      /* 시머 sweep */
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0, left: '-120%',
+                        width: '80%', height: '100%',
+                        background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%)',
+                        transition: 'left 0s',
+                        pointerEvents: 'none',
+                      },
+                      '&:hover': {
+                        backgroundPosition: '100% 50%',
+                        boxShadow: `0 16px 40px ${colors.primaryDark}50`,
+                        transform: 'translateY(-3px) scale(1.025)',
+                        '&::after': { left: '160%', transition: 'left 0.55s ease' },
+                        '& .MuiButton-endIcon svg': { transform: 'translateX(4px)' },
+                      },
+                      '&:active': { transform: 'translateY(0) scale(0.98)' },
+                    }}
+                  >
+                    포트폴리오 둘러보기
+                  </Button>
+                </Box>
 
+                {/* ─ Secondary CTA: 연락하기 ─ */}
                 <Button
                   variant="outlined" size="large"
                   onClick={() => scrollTo('contact')}
                   aria-label="연락처 섹션으로 이동"
                   sx={{
-                    borderColor: `${colors.primary}70`, color: colors.primaryDark,
-                    px: { xs: 3, sm: 3.5, md: 4.5 }, py: 1.5,
-                    minHeight: { xs: 52, sm: 48 },
+                    borderColor: `${colors.primary}60`, color: colors.primaryDark,
+                    px: { xs: 3.5, sm: 4, md: 5 }, py: { xs: 1.7, sm: 1.5 },
+                    minHeight: { xs: 54, sm: 50 },
                     width: { xs: '100%', sm: 'auto' },
-                    fontSize: '0.9rem', fontWeight: 600, borderRadius: 2, letterSpacing: 0.5,
-                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s, background-color 0.22s',
+                    fontSize: { xs: '0.92rem', sm: '0.95rem' },
+                    fontWeight: 600, borderRadius: 2, letterSpacing: 0.6,
+                    backdropFilter: 'blur(8px)',
+                    backgroundColor: `${colors.bgSecondary}60`,
+                    transition: 'transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s, background-color 0.25s',
                     willChange: 'transform',
                     '&:hover': {
                       borderColor: colors.primaryDark,
-                      backgroundColor: `${colors.primary}12`,
-                      boxShadow: `0 10px 28px ${colors.primaryDark}22`,
-                      transform: 'translateY(-3px) scale(1.02)',
+                      backgroundColor: `${colors.primary}14`,
+                      boxShadow: `0 10px 30px ${colors.primaryDark}20`,
+                      transform: 'translateY(-3px) scale(1.025)',
                     },
-                    '&:active': { transform: 'translateY(0) scale(0.99)' },
+                    '&:active': { transform: 'translateY(0) scale(0.98)' },
                   }}
                 >
                   연락하기
+                </Button>
+              </Box>
+
+              {/* ─ Tertiary: 이력서 다운로드 (ghost link) ─ */}
+              <Box sx={{ mb: { xs: 3, sm: 3.5 } }}>
+                <Button
+                  component="a"
+                  href="/resume_kimjaewoo.pdf"
+                  download
+                  aria-label="이력서 PDF 다운로드"
+                  startIcon={<FileDownloadIcon sx={{ fontSize: '0.95rem !important' }} />}
+                  sx={{
+                    color: colors.textMuted,
+                    fontSize: '0.78rem', fontWeight: 500,
+                    px: 0, py: 0.5,
+                    textDecoration: 'none',
+                    letterSpacing: 0.3,
+                    minWidth: 0,
+                    '&:hover': {
+                      color: colors.primary,
+                      backgroundColor: 'transparent',
+                      textDecoration: 'underline',
+                      textDecorationColor: `${colors.primary}60`,
+                      textUnderlineOffset: '4px',
+                    },
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  이력서 다운로드 (PDF)
                 </Button>
               </Box>
 
@@ -693,8 +771,10 @@ export default function HeroSection() {
               </Box>
 
               {/* ── 소셜 링크 ── */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 0.75 }, flexWrap: 'wrap' }}>
-                <Tooltip title="GitHub 보기" arrow placement="top">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 0.9 }, flexWrap: 'wrap' }}>
+
+                {/* GitHub */}
+                <Tooltip title="GitHub 프로필" arrow placement="top">
                   <IconButton
                     component="a" href="https://github.com/wmr102095-cloud"
                     target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필 열기"
@@ -702,13 +782,14 @@ export default function HeroSection() {
                       color: colors.textMuted,
                       width: { xs: 48, sm: 44 }, height: { xs: 48, sm: 44 },
                       border: `1px solid ${colors.border}`, borderRadius: 2,
-                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, background-color 0.2s, box-shadow 0.22s',
                       willChange: 'transform',
                       '&:hover': {
-                        color: colors.textPrimary, borderColor: colors.textPrimary,
-                        backgroundColor: `${colors.primaryDark}10`,
-                        transform: 'translateY(-4px)',
-                        boxShadow: `0 8px 20px ${colors.primaryDark}18`,
+                        color: '#f0f6ff',
+                        borderColor: '#1a1412cc',
+                        backgroundColor: '#1a1412',
+                        transform: 'translateY(-4px) scale(1.08)',
+                        boxShadow: `0 10px 24px #1a141240`,
                       },
                     }}
                   >
@@ -716,6 +797,31 @@ export default function HeroSection() {
                   </IconButton>
                 </Tooltip>
 
+                {/* LinkedIn */}
+                <Tooltip title="LinkedIn 프로필" arrow placement="top">
+                  <IconButton
+                    component="a" href="https://www.linkedin.com/in/wmr102095"
+                    target="_blank" rel="noopener noreferrer" aria-label="LinkedIn 프로필 열기"
+                    sx={{
+                      color: colors.textMuted,
+                      width: { xs: 48, sm: 44 }, height: { xs: 48, sm: 44 },
+                      border: `1px solid ${colors.border}`, borderRadius: 2,
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, background-color 0.2s, box-shadow 0.22s',
+                      willChange: 'transform',
+                      '&:hover': {
+                        color: '#fff',
+                        borderColor: '#0077B5cc',
+                        backgroundColor: '#0077B5',
+                        transform: 'translateY(-4px) scale(1.08)',
+                        boxShadow: '0 10px 24px #0077B540',
+                      },
+                    }}
+                  >
+                    <LinkedInIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.1rem' } }} />
+                  </IconButton>
+                </Tooltip>
+
+                {/* Email */}
                 <Tooltip title="이메일 보내기" arrow placement="top">
                   <IconButton
                     component="a" href="mailto:wmr102095@gmail.com"
@@ -724,13 +830,14 @@ export default function HeroSection() {
                       color: colors.textMuted,
                       width: { xs: 48, sm: 44 }, height: { xs: 48, sm: 44 },
                       border: `1px solid ${colors.border}`, borderRadius: 2,
-                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
+                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, background-color 0.2s, box-shadow 0.22s',
                       willChange: 'transform',
                       '&:hover': {
-                        color: colors.primary, borderColor: colors.primary,
-                        backgroundColor: `${colors.primary}10`,
-                        transform: 'translateY(-4px)',
-                        boxShadow: `0 8px 20px ${colors.primary}25`,
+                        color: '#fff',
+                        borderColor: `${colors.primary}cc`,
+                        backgroundColor: colors.primary,
+                        transform: 'translateY(-4px) scale(1.08)',
+                        boxShadow: `0 10px 24px ${colors.primary}40`,
                       },
                     }}
                   >
