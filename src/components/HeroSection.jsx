@@ -323,7 +323,7 @@ export default function HeroSection() {
                 transition: 'opacity 0.7s ease 450ms, transform 0.7s ease 450ms',
               }}
             >
-              설계부터 배포까지, 혼자.
+              공간을 설계하듯, 웹을 만듭니다.
             </Typography>
 
             {/* 역할 모핑 텍스트 */}
