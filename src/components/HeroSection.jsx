@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -8,8 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { colors } from '../theme/theme';
@@ -40,7 +40,7 @@ const BG_DOTS = [
 const ROLES       = ['Frontend Developer', 'UI / UX Designer', 'React Builder', 'Supabase Developer'];
 const MORPH_WORDS = ['개발자', '디자이너', '크리에이터'];
 
-/* ── 타이핑 훅: setTimeout 기반 타이핑/지우기 사이클 ── */
+/* ── 타이핑 훅 ── */
 function useTypewriter(words, { typingMs = 75, erasingMs = 42, pauseMs = 2000 } = {}) {
   const [text,    setText]    = useState('');
   const [wIdx,    setWIdx]    = useState(0);
@@ -53,10 +53,7 @@ function useTypewriter(words, { typingMs = 75, erasingMs = 42, pauseMs = 2000 } 
       if (text === target) {
         t = setTimeout(() => setErasing(true), pauseMs);
       } else {
-        t = setTimeout(
-          () => setText(target.slice(0, text.length + 1)),
-          typingMs + Math.random() * 28,
-        );
+        t = setTimeout(() => setText(target.slice(0, text.length + 1)), typingMs + Math.random() * 28);
       }
     } else {
       if (text === '') {
@@ -72,7 +69,7 @@ function useTypewriter(words, { typingMs = 75, erasingMs = 42, pauseMs = 2000 } 
   return text;
 }
 
-/* ── 텍스트 모핑 훅: 단어 전환 + entering/exiting 상태 ── */
+/* ── 텍스트 모핑 훅 ── */
 function useMorphText(words, interval = 2600) {
   const [idx,      setIdx]      = useState(0);
   const [entering, setEntering] = useState(true);
@@ -84,10 +81,7 @@ function useMorphText(words, interval = 2600) {
 
   useEffect(() => {
     if (!entering) {
-      const t = setTimeout(() => {
-        setIdx(i => (i + 1) % words.length);
-        setEntering(true);
-      }, 380);
+      const t = setTimeout(() => { setIdx(i => (i + 1) % words.length); setEntering(true); }, 380);
       return () => clearTimeout(t);
     }
   }, [entering, words.length]);
@@ -95,7 +89,7 @@ function useMorphText(words, interval = 2600) {
   return { word: words[idx], entering, idx };
 }
 
-/* ── rAF 스로틀 스크롤 훅 (패럴렉스 공용) ── */
+/* ── rAF 스크롤 훅 ── */
 function useScrollY() {
   const [scrollY, setScrollY] = useState(0);
   const rafRef = useRef(null);
@@ -117,15 +111,21 @@ function useScrollY() {
 }
 
 export default function HeroSection() {
-  const [show, setShow] = useState(false);
-  const scrollY  = useScrollY();
-  /* 패럴렉스 오프셋 — 각 레이어 깊이에 따라 속도 분리 */
-  const bgY1     = scrollY * 0.18;   // 배경 링 1 (가장 뒤)
-  const bgY2     = scrollY * 0.11;   // 배경 링 2
-  const dotsY    = scrollY * 0.08;   // 배경 도트 (중간층)
-  const orbitY   = scrollY * -0.07;  // 오빗 비주얼 (앞으로 튀어나오는 효과)
+  const theme     = useTheme();
+  const isMobile  = useMediaQuery(theme.breakpoints.down('sm'));   // < 600px
+  const isTablet  = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600–899px
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));     // ≥ 900px
 
-  const typedRole                                      = useTypewriter(ROLES);
+  const [show, setShow] = useState(false);
+  const scrollY = useScrollY();
+
+  /* 패럴렉스 — 모바일에서는 비활성화 (성능 + UX) */
+  const bgY1   = isDesktop ? scrollY * 0.18  : 0;
+  const bgY2   = isDesktop ? scrollY * 0.11  : 0;
+  const dotsY  = isDesktop ? scrollY * 0.08  : 0;
+  const orbitY = isDesktop ? scrollY * -0.07 : 0;
+
+  const typedRole                                            = useTypewriter(ROLES);
   const { word: morphWord, entering: morphEntering, idx: morphIdx } = useMorphText(MORPH_WORDS, 2600);
 
   const navigate = useNavigate();
@@ -164,57 +164,50 @@ export default function HeroSection() {
         `,
       }}
     >
-      {/* ── 배경 장식: 회전 링 (레이어 1 — 가장 뒤, 느린 패럴렉스) ── */}
+      {/* ── 배경 링 1 ── */}
       <Box sx={{
         position: 'absolute', top: '-12%', right: '-8%',
         transform: `translate3d(0, ${bgY1}px, 0)`,
-        willChange: 'transform',
+        willChange: isDesktop ? 'transform' : 'auto',
         pointerEvents: 'none',
       }}>
         <Box sx={{
-          width: { xs: 280, md: 520 }, height: { xs: 280, md: 520 },
+          width: { xs: 200, sm: 320, md: 520 }, height: { xs: 200, sm: 320, md: 520 },
           borderRadius: '50%',
           border: `1px solid ${colors.primary}20`,
           animation: 'ringSpinCW 50s linear infinite',
-          '@keyframes ringSpinCW': {
-            from: { transform: 'rotate(0deg)' },
-            to:   { transform: 'rotate(360deg)' },
-          },
-        }} />
-      </Box>
-      {/* ── 배경 장식: 회전 링 (레이어 2 — 조금 더 앞) ── */}
-      <Box sx={{
-        position: 'absolute', bottom: '-10%', left: '-6%',
-        transform: `translate3d(0, ${bgY2}px, 0)`,
-        willChange: 'transform',
-        pointerEvents: 'none',
-      }}>
-        <Box sx={{
-          width: { xs: 200, md: 380 }, height: { xs: 200, md: 380 },
-          borderRadius: '50%',
-          border: `1px solid ${colors.accent}40`,
-          animation: 'ringSpinCCW 38s linear infinite',
-          '@keyframes ringSpinCCW': {
-            from: { transform: 'rotate(0deg)' },
-            to:   { transform: 'rotate(-360deg)' },
-          },
+          '@keyframes ringSpinCW': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
         }} />
       </Box>
 
-      {/* ── 배경 장식: 떠다니는 도트 (레이어 3 — 패럴렉스 + 부유 중첩) ── */}
-      {BG_DOTS.map((d, i) => (
+      {/* ── 배경 링 2 ── */}
+      <Box sx={{
+        position: 'absolute', bottom: '-10%', left: '-6%',
+        transform: `translate3d(0, ${bgY2}px, 0)`,
+        willChange: isDesktop ? 'transform' : 'auto',
+        pointerEvents: 'none',
+      }}>
+        <Box sx={{
+          width: { xs: 140, sm: 240, md: 380 }, height: { xs: 140, sm: 240, md: 380 },
+          borderRadius: '50%',
+          border: `1px solid ${colors.accent}40`,
+          animation: 'ringSpinCCW 38s linear infinite',
+          '@keyframes ringSpinCCW': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(-360deg)' } },
+        }} />
+      </Box>
+
+      {/* ── 배경 도트 (태블릿·데스크톱만) ── */}
+      {!isMobile && BG_DOTS.map((d, i) => (
         <Box key={i} sx={{
           position: 'absolute',
           top: d.top, left: d.left, right: d.right,
           transform: `translate3d(0, ${dotsY * (0.6 + i * 0.1)}px, 0)`,
-          willChange: 'transform',
+          willChange: isDesktop ? 'transform' : 'auto',
           pointerEvents: 'none',
         }}>
           <Box sx={{
-            width: d.size, height: d.size,
-            borderRadius: '50%',
-            backgroundColor: colors.primary,
-            opacity: 0.28,
+            width: d.size, height: d.size, borderRadius: '50%',
+            backgroundColor: colors.primary, opacity: 0.28,
             animation: `dotFloat${i} ${3.2 + i * 0.6}s ease-in-out infinite`,
             [`@keyframes dotFloat${i}`]: {
               '0%, 100%': { transform: 'translateY(0)',    opacity: 0.28 },
@@ -226,61 +219,77 @@ export default function HeroSection() {
 
       <Container
         maxWidth="lg"
-        sx={{ px: { xs: 2.5, sm: 3, md: 4 }, py: { xs: 13, sm: 12, md: 0 } }}
+        sx={{
+          px: { xs: 2.5, sm: 3, md: 4 },
+          /* 모바일: 위아래 패딩으로 수직 여백 확보, 데스크톱: 그리드 minHeight로 대체 */
+          pt: { xs: 11, sm: 12, md: 0 },
+          pb: { xs: 9,  sm: 10, md: 0 },
+        }}
       >
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', md: '54% 46%' },
-          gap: { xs: 4, sm: 5, md: 4 },
+          gap: { xs: 5, sm: 6, md: 4 },
           alignItems: 'center',
           minHeight: { md: '100vh' },
         }}>
 
           {/* ── 왼쪽: 텍스트 콘텐츠 ── */}
           <Box>
-            {/* 오버라인 */}
+
+            {/* 오버라인 — 타이핑 롤 */}
             <Typography
               variant="overline"
               sx={{
                 color: colors.primary,
-                letterSpacing: { xs: 3, sm: 5 },
-                fontSize: { xs: '0.62rem', sm: '0.7rem' },
+                letterSpacing: { xs: 2.5, sm: 4, md: 5 },
+                fontSize: { xs: '0.65rem', sm: '0.68rem', md: '0.7rem' },
                 fontWeight: 600,
-                mb: 3,
+                mb: { xs: 2, sm: 2.5, md: 3 },
                 display: 'block',
+                minHeight: '1.2em',
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(10px)',
                 transition: 'opacity 0.6s ease 0ms, transform 0.6s ease 0ms',
               }}
             >
               {typedRole}
-              {/* 깜박이는 타이핑 커서 */}
-              <Box
-                component="span"
-                sx={{
-                  display: 'inline-block',
-                  width: '1.5px', height: '0.9em',
-                  backgroundColor: colors.primary,
-                  mx: 0.4,
-                  verticalAlign: 'middle',
-                  animation: 'cursorBlink 1s step-end infinite',
-                  '@keyframes cursorBlink': {
-                    '0%, 100%': { opacity: 1 },
-                    '50%':      { opacity: 0 },
-                  },
-                }}
-              />
+              <Box component="span" sx={{
+                display: 'inline-block',
+                width: '1.5px', height: '0.9em',
+                backgroundColor: colors.primary,
+                mx: 0.4, verticalAlign: 'middle',
+                animation: 'cursorBlink 1s step-end infinite',
+                '@keyframes cursorBlink': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0 } },
+              }} />
               {' · 김재우'}
             </Typography>
 
-            {/* 메인 H1 — 그라데이션 텍스트 */}
+            {/* ── 메인 헤드라인: 이름 ── */}
+            <Typography
+              component="p"
+              sx={{
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontSize:   { xs: '1.5rem', sm: '1.9rem', md: '2.4rem' },
+                fontWeight: 700,
+                lineHeight: 1.2,
+                color:      colors.textMuted,
+                mb: 0,
+                opacity:    show ? 1 : 0,
+                transform:  show ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'opacity 0.7s ease 120ms, transform 0.7s ease 120ms',
+              }}
+            >
+              안녕하세요,
+            </Typography>
+
             <Typography
               variant="h1"
               sx={{
-                fontSize:   { xs: '2.2rem', sm: '3rem', md: '3.8rem' },
-                fontWeight: 700,
-                lineHeight: 1.1,
-                mb: 1,
+                fontSize:   { xs: '2.8rem', sm: '3.6rem', md: '4.4rem', lg: '5rem' },
+                fontWeight: 800,
+                lineHeight: 1.05,
+                mb: { xs: 1.5, sm: 2 },
                 background: `linear-gradient(135deg, ${colors.textPrimary} 0%, ${colors.primary} 35%, ${colors.accent} 65%, ${colors.primaryDark} 100%)`,
                 backgroundSize: '300% 100%',
                 WebkitBackgroundClip: 'text',
@@ -294,120 +303,96 @@ export default function HeroSection() {
                 },
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(24px)',
-                transition: 'opacity 0.7s ease 150ms, transform 0.7s ease 150ms',
+                transition: 'opacity 0.7s ease 280ms, transform 0.7s ease 280ms',
               }}
             >
-              React · Supabase · MUI
+              김재우입니다.
             </Typography>
 
-            {/* 서브 H2 */}
+            {/* H2 서브 타이틀 */}
             <Typography
               variant="h2"
               sx={{
-                fontSize:   { xs: '1.5rem', sm: '2rem', md: '2.6rem' },
+                fontSize:   { xs: '1.25rem', sm: '1.6rem', md: '2rem', lg: '2.4rem' },
                 fontWeight: 700,
-                lineHeight: 1.15,
+                lineHeight: 1.2,
                 color:      colors.textMuted,
-                mb: 1.5,
+                mb: { xs: 1.5, md: 2 },
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'opacity 0.7s ease 350ms, transform 0.7s ease 350ms',
+                transition: 'opacity 0.7s ease 450ms, transform 0.7s ease 450ms',
               }}
             >
               설계부터 배포까지, 혼자.
             </Typography>
 
-            {/* ── 역할 모핑 텍스트: < 개발자 /> ── */}
+            {/* 역할 모핑 텍스트 */}
             <Box sx={{
               display: 'flex', alignItems: 'center', gap: 0.8,
-              mb: 2,
+              mb: { xs: 2, md: 2.5 },
               opacity:    show ? 1 : 0,
-              transition: 'opacity 0.6s ease 500ms',
+              transition: 'opacity 0.6s ease 580ms',
             }}>
               <Box component="span" sx={{
                 fontFamily: 'monospace',
-                fontSize: { xs: '1rem', md: '1.15rem' },
-                color: `${colors.accent}`,
-                opacity: 0.65, fontWeight: 400,
-                userSelect: 'none',
-              }}>
-                {'<'}
-              </Box>
-              <Box sx={{
-                display: 'inline-flex',
-                minWidth: { xs: 76, sm: 90, md: 105 },
-              }}>
+                fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                color: colors.accent, opacity: 0.7, fontWeight: 400, userSelect: 'none',
+              }}>{'<'}</Box>
+              <Box sx={{ display: 'inline-flex', minWidth: { xs: 68, sm: 80, md: 100 } }}>
                 {morphWord.split('').map((char, i) => (
-                  <Box
-                    key={`${morphIdx}-${i}`}
-                    component="span"
-                    sx={{
-                      display: 'inline-block',
-                      fontFamily: '"Playfair Display", Georgia, serif',
-                      fontSize: { xs: '1.05rem', sm: '1.2rem', md: '1.35rem' },
-                      fontWeight: 700,
-                      color: colors.primary,
-                      animation: morphEntering
-                        ? `mIn 0.55s cubic-bezier(0.34,1.56,0.64,1) ${i * 55}ms both`
-                        : `mOut 0.28s ease ${i * 22}ms both`,
-                      '@keyframes mIn': {
-                        from: { opacity: 0, transform: 'translateY(110%)', filter: 'blur(8px)' },
-                        to:   { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
-                      },
-                      '@keyframes mOut': {
-                        from: { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
-                        to:   { opacity: 0, transform: 'translateY(-80%)', filter: 'blur(6px)' },
-                      },
-                    }}
-                  >
-                    {char}
-                  </Box>
+                  <Box key={`${morphIdx}-${i}`} component="span" sx={{
+                    display: 'inline-block',
+                    fontFamily: '"Playfair Display", Georgia, serif',
+                    fontSize: { xs: '0.95rem', sm: '1.1rem', md: '1.3rem' },
+                    fontWeight: 700, color: colors.primary,
+                    animation: morphEntering
+                      ? `mIn 0.55s cubic-bezier(0.34,1.56,0.64,1) ${i * 55}ms both`
+                      : `mOut 0.28s ease ${i * 22}ms both`,
+                    '@keyframes mIn': {
+                      from: { opacity: 0, transform: 'translateY(110%)', filter: 'blur(8px)' },
+                      to:   { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
+                    },
+                    '@keyframes mOut': {
+                      from: { opacity: 1, transform: 'translateY(0)',    filter: 'blur(0)'  },
+                      to:   { opacity: 0, transform: 'translateY(-80%)', filter: 'blur(6px)' },
+                    },
+                  }}>{char}</Box>
                 ))}
               </Box>
               <Box component="span" sx={{
                 fontFamily: 'monospace',
-                fontSize: { xs: '1rem', md: '1.15rem' },
-                color: `${colors.accent}`,
-                opacity: 0.65, fontWeight: 400,
-                userSelect: 'none',
-              }}>
-                {'/>'}
-              </Box>
+                fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                color: colors.accent, opacity: 0.7, fontWeight: 400, userSelect: 'none',
+              }}>{'/>'}</Box>
             </Box>
 
             {/* 그라데이션 구분선 */}
             <Box sx={{
-              width:      show ? 56 : 0,
+              width:      show ? { xs: 40, md: 56 } : 0,
               height:     '2px',
               background: `linear-gradient(to right, ${colors.primary}, ${colors.accent})`,
-              mb:         3,
+              mb:         { xs: 2, md: 3 },
               borderRadius: 1,
-              transition: 'width 0.6s ease 600ms',
+              transition: 'width 0.6s ease 680ms',
             }} />
 
-            {/* 슬로건 3줄 — 글자별 순차 등장 */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: { xs: 4, md: 5 } }}>
+            {/* 슬로건 3줄 */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mb: { xs: 3, sm: 3.5, md: 4 } }}>
               {LINES.map((line, lineIdx) => (
-                <Box key={lineIdx} sx={{ lineHeight: 1.85 }}>
+                <Box key={lineIdx} sx={{ lineHeight: 1.75 }}>
                   {[...line].map((char, charIdx) => (
-                    <Box
-                      key={charIdx}
-                      component="span"
-                      sx={{
-                        display: 'inline-block',
-                        fontSize:   { xs: '1rem', sm: '1.2rem', md: '1.35rem' },
-                        fontWeight: 500,
-                        color:      colors.textSecondary,
-                        fontStyle:  'italic',
-                        whiteSpace: 'pre',
-                        opacity:    show ? 1 : 0,
-                        transform:  show ? 'translateY(0)' : 'translateY(10px)',
-                        transition: `opacity 0.42s ease ${620 + lineIdx * 170 + charIdx * 22}ms,
-                                     transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94) ${620 + lineIdx * 170 + charIdx * 22}ms`,
-                      }}
-                    >
-                      {char}
-                    </Box>
+                    <Box key={charIdx} component="span" sx={{
+                      display: 'inline-block',
+                      fontSize:   { xs: '0.95rem', sm: '1.1rem', md: '1.25rem' },
+                      fontWeight: 500,
+                      color:      colors.textSecondary,
+                      fontStyle:  'italic',
+                      whiteSpace: 'pre',
+                      opacity:    show ? 1 : 0,
+                      transform:  show ? 'translateY(0)' : 'translateY(10px)',
+                      transition: `opacity 0.42s ease ${700 + lineIdx * 160 + charIdx * 20}ms,
+                                   transform 0.42s ease ${700 + lineIdx * 160 + charIdx * 20}ms`,
+                    }}>{char}</Box>
                   ))}
                 </Box>
               ))}
@@ -417,18 +402,68 @@ export default function HeroSection() {
             <Typography
               variant="body1"
               sx={{
-                color:    colors.textMuted,
-                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
-                lineHeight: 1.9,
-                maxWidth: 420,
-                mb:       { xs: 4, sm: 5, md: 6 },
+                color:      colors.textMuted,
+                fontSize:   { xs: '0.85rem', sm: '0.9rem', md: '0.98rem' },
+                lineHeight: { xs: 1.75, md: 1.9 },
+                maxWidth:   { xs: '100%', sm: 420 },
+                mb:         { xs: 3, sm: 3.5, md: 4 },
                 opacity:    show ? 1 : 0,
                 transform:  show ? 'translateY(0)' : 'translateY(12px)',
-                transition: 'opacity 0.6s ease 1350ms, transform 0.6s ease 1350ms',
+                transition: 'opacity 0.6s ease 1300ms, transform 0.6s ease 1300ms',
               }}
             >
-              React · Supabase · MUI로 아름답고 작동하는 웹앱을 직접 설계하고 배포합니다. 건축 공간 설계에서 시작한 디자인 감각을 화면 위에서 이어가고 있습니다.
+              React · Supabase · MUI로 아름답고 작동하는 웹앱을 직접 설계하고 배포합니다.
+              {!isMobile && <><br />건축 공간 설계에서 시작한 디자인 감각을 화면 위에서 이어가고 있습니다.</>}
+              {isMobile && ' 건축 공간 설계에서 시작한 디자인 감각을 화면 위에서 이어가고 있습니다.'}
             </Typography>
+
+            {/* ── 모바일·태블릿 기술 스택 칩 (데스크톱 orbit 대체) ── */}
+            {!isDesktop && (
+              <Box sx={{
+                display: 'flex', flexWrap: 'wrap',
+                gap: { xs: 0.8, sm: 1 },
+                mb: { xs: 3.5, sm: 4 },
+              }}>
+                {TECH_STACK.map((tech, i) => (
+                  <Box key={tech.name} sx={{
+                    display: 'flex', alignItems: 'center',
+                    gap: { xs: 0.5, sm: 0.7 },
+                    px: { xs: 1.3, sm: 1.5 },
+                    py: { xs: 0.6, sm: 0.7 },
+                    border: `1px solid ${colors.border}`,
+                    borderRadius: 20,
+                    backgroundColor: `${colors.primary}08`,
+                    transition: 'border-color 0.2s, background-color 0.2s',
+                    '&:hover': {
+                      borderColor: colors.primary,
+                      backgroundColor: `${colors.primary}14`,
+                    },
+                    opacity:    show ? 1 : 0,
+                    transform:  show ? 'translateY(0)' : 'translateY(8px)',
+                    transition2: `opacity 0.4s ease ${1450 + i * 60}ms, transform 0.4s ease ${1450 + i * 60}ms`,
+                    /* transition2는 무효 — 아래 transition으로 처리 */
+                    animation: `none`,
+                  }}
+                    style={{
+                      opacity: show ? 1 : 0,
+                      transform: show ? 'translateY(0)' : 'translateY(8px)',
+                      transition: `opacity 0.4s ease ${1450 + i * 60}ms, transform 0.4s ease ${1450 + i * 60}ms`,
+                    }}>
+                    <Typography sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, lineHeight: 1 }}>
+                      {tech.icon}
+                    </Typography>
+                    <Typography sx={{
+                      fontSize:   { xs: '0.7rem', sm: '0.75rem' },
+                      fontWeight: 600,
+                      color:      colors.textPrimary,
+                      letterSpacing: 0.2,
+                    }}>
+                      {tech.name}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
 
             {/* ── CTA 버튼 영역 ── */}
             <Box sx={{
@@ -436,29 +471,28 @@ export default function HeroSection() {
               transform:  show ? 'translateY(0)' : 'translateY(12px)',
               transition: 'opacity 0.6s ease 1550ms, transform 0.6s ease 1550ms',
             }}>
-
-              {/* 주요 버튼 행 */}
+              {/* 버튼 행 */}
               <Box sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
                 gap: { xs: 1.5, sm: 2 },
                 flexWrap: { sm: 'wrap' },
-                mb: 2.5,
+                mb: { xs: 2, sm: 2.5 },
               }}>
-
-                {/* Primary CTA */}
                 <Button
                   variant="contained"
                   size="large"
                   onClick={() => scrollTo('projects')}
+                  aria-label="프로젝트 섹션으로 이동"
                   sx={{
                     backgroundColor: colors.primaryDark,
                     color: '#f5ede3',
-                    px: { xs: 3.5, md: 4.5 },
-                    py: 1.5,
-                    minHeight: { xs: 48, sm: 44 },
+                    px: { xs: 3, sm: 3.5, md: 4.5 },
+                    py: { xs: 1.5, sm: 1.5 },
+                    /* 터치 타겟 최소 44px */
+                    minHeight: { xs: 52, sm: 48, md: 48 },
                     width: { xs: '100%', sm: 'auto' },
-                    fontSize: '0.9rem',
+                    fontSize: { xs: '0.9rem', sm: '0.9rem' },
                     fontWeight: 600,
                     borderRadius: 2,
                     letterSpacing: 0.5,
@@ -476,19 +510,19 @@ export default function HeroSection() {
                   프로젝트 보기
                 </Button>
 
-                {/* Secondary CTA */}
                 <Button
                   variant="outlined"
                   size="large"
                   onClick={() => scrollTo('contact')}
+                  aria-label="연락처 섹션으로 이동"
                   sx={{
                     borderColor: `${colors.primary}70`,
                     color: colors.primaryDark,
-                    px: { xs: 3.5, md: 4.5 },
-                    py: 1.5,
-                    minHeight: { xs: 48, sm: 44 },
+                    px: { xs: 3, sm: 3.5, md: 4.5 },
+                    py: { xs: 1.5, sm: 1.5 },
+                    minHeight: { xs: 52, sm: 48, md: 48 },
                     width: { xs: '100%', sm: 'auto' },
-                    fontSize: '0.9rem',
+                    fontSize: { xs: '0.9rem', sm: '0.9rem' },
                     fontWeight: 600,
                     borderRadius: 2,
                     letterSpacing: 0.5,
@@ -505,50 +539,21 @@ export default function HeroSection() {
                 >
                   연락하기
                 </Button>
-
-                {/* 이력서 다운로드 — 파일 준비 시 활성화 */}
-                <Tooltip title="이력서 준비 중입니다" arrow placement="top">
-                  <span style={{ width: 'inherit' }}>
-                    <Button
-                      variant="text"
-                      size="large"
-                      disabled
-                      startIcon={<DownloadIcon sx={{ fontSize: '1rem !important' }} />}
-                      sx={{
-                        color: `${colors.textMuted}80`,
-                        px: { xs: 2.5, md: 3 },
-                        py: 1.5,
-                        minHeight: { xs: 48, sm: 44 },
-                        width: { xs: '100%', sm: 'auto' },
-                        fontSize: '0.9rem',
-                        fontWeight: 600,
-                        borderRadius: 2,
-                        letterSpacing: 0.5,
-                        border: `1px dashed ${colors.primary}25`,
-                        '&.Mui-disabled': {
-                          color: `${colors.textMuted}70`,
-                          border: `1px dashed ${colors.primary}25`,
-                        },
-                      }}
-                    >
-                      이력서
-                    </Button>
-                  </span>
-                </Tooltip>
               </Box>
 
-              {/* 소셜 아이콘 행 */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.75, sm: 0.5 }, flexWrap: 'wrap' }}>
+              {/* 소셜 아이콘 + 이메일 */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 0.75 }, flexWrap: 'wrap' }}>
                 <Tooltip title="GitHub 보기" arrow placement="top">
                   <IconButton
                     component="a"
                     href="https://github.com/wmr102095-cloud"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="GitHub 프로필"
+                    aria-label="GitHub 프로필 열기"
                     sx={{
                       color: colors.textMuted,
-                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
+                      width:  { xs: 48, sm: 44 },
+                      height: { xs: 48, sm: 44 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
                       transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
@@ -562,34 +567,7 @@ export default function HeroSection() {
                       },
                     }}
                   >
-                    <GitHubIcon sx={{ fontSize: '1.1rem' }} />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="LinkedIn 보기" arrow placement="top">
-                  <IconButton
-                    component="a"
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn 프로필"
-                    sx={{
-                      color: colors.textMuted,
-                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 2,
-                      transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
-                      willChange: 'transform',
-                      '&:hover': {
-                        color: '#0077B5',
-                        borderColor: '#0077B5',
-                        backgroundColor: '#0077B510',
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 8px 20px #0077B520',
-                      },
-                    }}
-                  >
-                    <LinkedInIcon sx={{ fontSize: '1.1rem' }} />
+                    <GitHubIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.1rem' } }} />
                   </IconButton>
                 </Tooltip>
 
@@ -600,7 +578,8 @@ export default function HeroSection() {
                     aria-label="이메일 보내기"
                     sx={{
                       color: colors.textMuted,
-                      width: { xs: 44, sm: 40 }, height: { xs: 44, sm: 40 },
+                      width:  { xs: 48, sm: 44 },
+                      height: { xs: 48, sm: 44 },
                       border: `1px solid ${colors.border}`,
                       borderRadius: 2,
                       transition: 'transform 0.22s ease, color 0.2s, border-color 0.2s, box-shadow 0.22s',
@@ -614,156 +593,136 @@ export default function HeroSection() {
                       },
                     }}
                   >
-                    <EmailIcon sx={{ fontSize: '1.1rem' }} />
+                    <EmailIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.1rem' } }} />
                   </IconButton>
                 </Tooltip>
 
                 <Divider
-                  orientation="vertical"
-                  flexItem
-                  sx={{ borderColor: colors.border, mx: 1, my: 0.5, display: { xs: 'none', sm: 'flex' } }}
+                  orientation="vertical" flexItem
+                  sx={{ borderColor: colors.border, mx: { sm: 0.5 }, my: 0.5, display: { xs: 'none', sm: 'flex' } }}
                 />
 
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colors.textMuted,
-                    fontSize: '0.75rem',
-                    letterSpacing: 0.3,
-                    display: { xs: 'none', sm: 'block' },
-                  }}
-                >
+                <Typography variant="caption" sx={{
+                  color: colors.textMuted,
+                  fontSize: { sm: '0.72rem', md: '0.75rem' },
+                  letterSpacing: 0.3,
+                  display: { xs: 'none', sm: 'block' },
+                }}>
                   wmr102095@gmail.com
                 </Typography>
               </Box>
             </Box>
           </Box>
 
-          {/* ── 오른쪽: 기술 스택 오빗 비주얼 (레이어 4 — 역방향 패럴렉스, 앞으로 나오는 효과) ── */}
-          <Box sx={{
-            display: { xs: 'none', md: 'flex' },
-            justifyContent: 'center',
-            alignItems: 'center',
-            transform: `translate3d(0, ${orbitY}px, 0)`,
-            willChange: 'transform',
-          }}>
+          {/* ── 오른쪽: 기술 스택 오빗 (데스크톱 전용) ── */}
+          {isDesktop && (
             <Box sx={{
               display: 'flex', justifyContent: 'center', alignItems: 'center',
-              opacity:    show ? 1 : 0,
-              transform:  show ? 'scale(1)' : 'scale(0.9)',
-              transition: 'opacity 0.8s ease 500ms, transform 0.8s ease 500ms',
+              transform: `translate3d(0, ${orbitY}px, 0)`,
+              willChange: 'transform',
             }}>
-            <Box sx={{ position: 'relative', width: 380, height: 420 }}>
-
-              {/* 점선 궤도 */}
               <Box sx={{
-                position: 'absolute',
-                top: '50%', left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 310, height: 310,
-                borderRadius: '50%',
-                border: `1.5px dashed ${colors.primary}28`,
-                pointerEvents: 'none',
-                animation: 'orbitRing 70s linear infinite',
-                '@keyframes orbitRing': {
-                  from: { transform: 'translate(-50%, -50%) rotate(0deg)' },
-                  to:   { transform: 'translate(-50%, -50%) rotate(360deg)' },
-                },
-              }} />
-
-              {/* 중앙 카드 */}
-              <Box sx={{
-                position: 'absolute',
-                top: '50%', left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 130, height: 130,
-                borderRadius: 4,
-                border: `1px solid ${colors.primary}50`,
-                background: `linear-gradient(145deg, ${colors.bgSecondary}, ${colors.bgPrimary})`,
-                boxShadow: `0 8px 32px ${colors.primaryDark}18, inset 0 1px 0 ${colors.accent}40`,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 2,
-                animation: 'centerPulse 4s ease-in-out infinite',
-                '@keyframes centerPulse': {
-                  '0%, 100%': { boxShadow: `0 8px 32px ${colors.primaryDark}18, inset 0 1px 0 ${colors.accent}40` },
-                  '50%':      { boxShadow: `0 12px 40px ${colors.primaryDark}28, inset 0 1px 0 ${colors.accent}60` },
-                },
+                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                opacity:    show ? 1 : 0,
+                transform:  show ? 'scale(1)' : 'scale(0.9)',
+                transition: 'opacity 0.8s ease 500ms, transform 0.8s ease 500ms',
               }}>
-                <Typography sx={{ fontSize: '2.4rem', lineHeight: 1, mb: 0.8 }}>💻</Typography>
-                <Typography sx={{
-                  fontSize: '0.62rem', color: colors.textMuted,
-                  fontWeight: 700, letterSpacing: 2.5,
-                  textTransform: 'uppercase',
-                }}>
-                  김재우
-                </Typography>
-              </Box>
+                <Box sx={{ position: 'relative', width: { md: 340, lg: 380 }, height: { md: 370, lg: 420 } }}>
 
-              {/* 오빗 기술 배지 6개 */}
-              {TECH_STACK.map((tech, i) => {
-                const angle  = (i / TECH_STACK.length) * 2 * Math.PI - Math.PI / 2;
-                const radius = 152;
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                const floatDir = i % 2 === 0 ? -7 : 7;
-                return (
-                  <Box
-                    key={tech.name}
-                    sx={{
-                      position: 'absolute',
-                      top:  `calc(50% + ${y}px)`,
-                      left: `calc(50% + ${x}px)`,
-                      transform: 'translate(-50%, -50%)',
-                      opacity:    show ? 1 : 0,
-                      transition: `opacity 0.5s ease ${800 + tech.delay}ms`,
-                      animation: `badgeFloat${i} ${3.6 + i * 0.35}s ease-in-out ${tech.delay}ms infinite`,
-                      [`@keyframes badgeFloat${i}`]: {
-                        '0%, 100%': { marginTop: '0px' },
-                        '50%':      { marginTop: `${floatDir}px` },
-                      },
-                      zIndex: 3,
-                    }}
-                  >
-                    <Box sx={{
-                      px: 1.6, py: 0.9,
-                      borderRadius: 2.5,
-                      border: `1px solid ${colors.primary}30`,
-                      background: `linear-gradient(145deg, ${colors.bgSecondary}, ${colors.bgPrimary})`,
-                      boxShadow: `0 4px 16px ${colors.primaryDark}10`,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 0.25,
-                      minWidth: 66,
-                      transition: 'border-color 0.22s, box-shadow 0.25s, transform 0.25s',
-                      willChange: 'transform',
-                      '&:hover': {
-                        borderColor: colors.primary,
-                        boxShadow: `0 10px 28px ${colors.primaryDark}28, 0 0 0 4px ${colors.primary}14`,
-                        transform: 'scale(1.14) translateY(-4px)',
-                      },
-                      cursor: 'default',
+                  {/* 점선 궤도 */}
+                  <Box sx={{
+                    position: 'absolute', top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: { md: 270, lg: 310 }, height: { md: 270, lg: 310 },
+                    borderRadius: '50%',
+                    border: `1.5px dashed ${colors.primary}28`,
+                    pointerEvents: 'none',
+                    animation: 'orbitRing 70s linear infinite',
+                    '@keyframes orbitRing': {
+                      from: { transform: 'translate(-50%, -50%) rotate(0deg)' },
+                      to:   { transform: 'translate(-50%, -50%) rotate(360deg)' },
+                    },
+                  }} />
+
+                  {/* 중앙 카드 */}
+                  <Box sx={{
+                    position: 'absolute', top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: { md: 110, lg: 130 }, height: { md: 110, lg: 130 },
+                    borderRadius: 4,
+                    border: `1px solid ${colors.primary}50`,
+                    background: `linear-gradient(145deg, ${colors.bgSecondary}, ${colors.bgPrimary})`,
+                    boxShadow: `0 8px 32px ${colors.primaryDark}18, inset 0 1px 0 ${colors.accent}40`,
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', zIndex: 2,
+                    animation: 'centerPulse 4s ease-in-out infinite',
+                    '@keyframes centerPulse': {
+                      '0%, 100%': { boxShadow: `0 8px 32px ${colors.primaryDark}18, inset 0 1px 0 ${colors.accent}40` },
+                      '50%':      { boxShadow: `0 12px 40px ${colors.primaryDark}28, inset 0 1px 0 ${colors.accent}60` },
+                    },
+                  }}>
+                    <Typography sx={{ fontSize: { md: '2rem', lg: '2.4rem' }, lineHeight: 1, mb: 0.8 }}>💻</Typography>
+                    <Typography sx={{
+                      fontSize: '0.62rem', color: colors.textMuted,
+                      fontWeight: 700, letterSpacing: 2.5, textTransform: 'uppercase',
                     }}>
-                      <Typography sx={{ fontSize: '1.25rem', lineHeight: 1 }}>{tech.icon}</Typography>
-                      <Typography sx={{
-                        fontSize: '0.63rem', fontWeight: 700,
-                        color: colors.textPrimary, letterSpacing: 0.2,
-                      }}>
-                        {tech.name}
-                      </Typography>
-                      <Typography sx={{ fontSize: '0.53rem', color: colors.textMuted }}>
-                        {tech.sub}
-                      </Typography>
-                    </Box>
+                      김재우
+                    </Typography>
                   </Box>
-                );
-              })}
+
+                  {/* 오빗 배지 6개 */}
+                  {TECH_STACK.map((tech, i) => {
+                    const angle  = (i / TECH_STACK.length) * 2 * Math.PI - Math.PI / 2;
+                    const radius = isTablet ? 130 : 152;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    const floatDir = i % 2 === 0 ? -7 : 7;
+                    return (
+                      <Box key={tech.name} sx={{
+                        position: 'absolute',
+                        top:  `calc(50% + ${y}px)`,
+                        left: `calc(50% + ${x}px)`,
+                        transform: 'translate(-50%, -50%)',
+                        opacity:    show ? 1 : 0,
+                        transition: `opacity 0.5s ease ${800 + tech.delay}ms`,
+                        animation: `badgeFloat${i} ${3.6 + i * 0.35}s ease-in-out ${tech.delay}ms infinite`,
+                        [`@keyframes badgeFloat${i}`]: {
+                          '0%, 100%': { marginTop: '0px' },
+                          '50%':      { marginTop: `${floatDir}px` },
+                        },
+                        zIndex: 3,
+                      }}>
+                        <Box sx={{
+                          px: { md: 1.3, lg: 1.6 }, py: { md: 0.7, lg: 0.9 },
+                          borderRadius: 2.5,
+                          border: `1px solid ${colors.primary}30`,
+                          background: `linear-gradient(145deg, ${colors.bgSecondary}, ${colors.bgPrimary})`,
+                          boxShadow: `0 4px 16px ${colors.primaryDark}10`,
+                          display: 'flex', flexDirection: 'column', alignItems: 'center',
+                          gap: 0.25, minWidth: { md: 56, lg: 66 },
+                          transition: 'border-color 0.22s, box-shadow 0.25s, transform 0.25s',
+                          willChange: 'transform', cursor: 'default',
+                          '&:hover': {
+                            borderColor: colors.primary,
+                            boxShadow: `0 10px 28px ${colors.primaryDark}28, 0 0 0 4px ${colors.primary}14`,
+                            transform: 'scale(1.14) translateY(-4px)',
+                          },
+                        }}>
+                          <Typography sx={{ fontSize: { md: '1.1rem', lg: '1.25rem' }, lineHeight: 1 }}>{tech.icon}</Typography>
+                          <Typography sx={{ fontSize: { md: '0.58rem', lg: '0.63rem' }, fontWeight: 700, color: colors.textPrimary, letterSpacing: 0.2 }}>
+                            {tech.name}
+                          </Typography>
+                          <Typography sx={{ fontSize: { md: '0.5rem', lg: '0.53rem' }, color: colors.textMuted }}>
+                            {tech.sub}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
             </Box>
-            </Box>
-          </Box>
+          )}
 
         </Box>
       </Container>
@@ -771,19 +730,20 @@ export default function HeroSection() {
       {/* ── 스크롤 인디케이터 ── */}
       <Box
         onClick={() => scrollTo('about')}
+        role="button"
+        aria-label="다음 섹션으로 스크롤"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') scrollTo('about'); }}
         sx={{
           position: 'absolute',
-          bottom: 28,
+          bottom: { xs: 20, sm: 28 },
           left: '50%',
           transform: 'translateX(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 0.3,
-          cursor: 'pointer',
-          opacity: 0.5,
-          transition: 'opacity 0.2s',
-          '&:hover': { opacity: 0.9 },
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.3,
+          cursor: 'pointer', opacity: 0.5, transition: 'opacity 0.2s',
+          /* 터치 타겟 확보 */
+          p: 1.5,
+          '&:hover, &:focus-visible': { opacity: 0.9 },
           animation: 'scrollBounce 2.2s ease-in-out infinite',
           '@keyframes scrollBounce': {
             '0%, 100%': { transform: 'translateX(-50%) translateY(0)'  },
@@ -792,12 +752,12 @@ export default function HeroSection() {
         }}
       >
         <Typography variant="caption" sx={{
-          color: colors.textMuted, letterSpacing: 4,
-          fontSize: '0.58rem', fontWeight: 600,
+          color: colors.textMuted, letterSpacing: { xs: 3, sm: 4 },
+          fontSize: { xs: '0.55rem', sm: '0.58rem' }, fontWeight: 600,
         }}>
           SCROLL
         </Typography>
-        <KeyboardArrowDownIcon sx={{ fontSize: '1.3rem', color: colors.textMuted }} />
+        <KeyboardArrowDownIcon sx={{ fontSize: { xs: '1.1rem', sm: '1.3rem' }, color: colors.textMuted }} />
       </Box>
     </Box>
   );
